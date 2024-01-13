@@ -18,6 +18,10 @@ enum Quadrant {
 struct Point {
     double x, y;
 
+    friend std::ostream &operator<<(std::ostream &os, const Point &point) {
+        return os << "[" << (point.x) << ":" << (point.y) << "]";
+    }
+
     bool operator==(const Point &other) const {
         return x == other.x && y == other.y;
     }
@@ -48,7 +52,7 @@ inline Area *splitArea(Area area) {
 }
 
 inline bool intersects(Area &first, Area &other) {
-    return first.xMin < other.xMax && first.xMax > other.xMin && first.yMax > other.yMin && first.yMin < other.yMax;
+    return first.xMin <= other.xMax && first.xMax >= other.xMin && first.yMax >= other.yMin && first.yMin <= other.yMax;
 }
 
 inline bool containsArea(Area &first, Area &other) {

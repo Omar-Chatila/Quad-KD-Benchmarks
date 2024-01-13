@@ -23,15 +23,28 @@ static string treeToString(KDTreeEfficient *node) {
     return result;
 }
 
+static void writeTreeToFile(KDTreeEfficient &kdTreeEfficient) {
+    std::ostringstream oss;
+    oss << treeToString(&kdTreeEfficient);
+    std::string result = oss.str();
 
-int main() {
-    FAST_IO();
+    std::string outputPath = R"(C:\Users\omarc\CLionProjects\QuadKDBench\output.txt)";
 
+    std::ofstream outputFile(outputPath);
+    if (outputFile.is_open()) {
+        outputFile << result;
+        outputFile.close();
+        std::cout << "Result written to: " << outputPath << std::endl;
+    } else {
+        std::cerr << "Unable to open the output file!" << std::endl;
+    }
+}
+
+static KDTreeEfficient buildTreeFromFile() {
     std::ifstream inputFile(R"(C:\Users\omarc\CLionProjects\QuadKDBench\random_points.txt)");
 
     if (!inputFile.is_open()) {
         std::cerr << "Error opening file\n";
-        return 1;
     }
 
     int pointNumber = 100000;
@@ -43,7 +56,6 @@ int main() {
         std::istringstream iss(line);
         std::string token;
 
-        // Split the line into tokens using comma as the delimiter
         getline(iss, token, ',');
         double x = std::stod(token);
 
@@ -62,28 +74,34 @@ int main() {
     }
 
     Area area{0, 10000, 0, 10000};
-    KDTreeEfficient kdTreeEfficient(pointArray, 0, area, 0, pointNumber - 1);
+    int start = 0;
+    pointNumber--;
+    KDTreeEfficient kdTreeEfficient(pointArray, 0, area, start, pointNumber);
     kdTreeEfficient.buildTree();
 
     cout << kdTreeEfficient.getHeight() << endl;
 
-    std::ostringstream oss;
-    oss << treeToString(&kdTreeEfficient);
-    std::string result = oss.str(); // write this in output.txt like you did in Java
+    //writeTreeToFile(kdTreeEfficient);
 
-    std::string outputPath = R"(C:\Users\omarc\CLionProjects\QuadKDBench\output.txt)";
+    return kdTreeEfficient;
+}
 
-    std::ofstream outputFile(outputPath);
-    if (outputFile.is_open()) {
-        outputFile << result;
-        outputFile.close();
-        std::cout << "Result written to: " << outputPath << std::endl;
-    } else {
-        std::cerr << "Unable to open the output file!" << std::endl;
+void testQuery(KDTreeEfficient &kdTreeEfficient) {
+    Area queryArea(234, 7000, 2000, 9000);
+    list<Point> result = kdTreeEfficient.query(queryArea);
+
+    for (auto p: result) {
+        cout << p << "\n";
     }
 
-    return 0;
+}
 
+int main() {
+    FAST_IO();
+    KDTreeEfficient kdTreeEfficient = buildTreeFromFile();
+    testQuery(kdTreeEfficient);
     return 0;
 }
+
+
 

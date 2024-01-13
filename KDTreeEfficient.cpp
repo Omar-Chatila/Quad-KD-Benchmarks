@@ -89,22 +89,22 @@ int KDTreeEfficient::getHeight() {
     }
 }
 
-vector<Point> KDTreeEfficient::query(Area queryRectangle) {
-    vector<Point> result;
+std::list<Point> KDTreeEfficient::query(Area queryRectangle) {
+    list<Point> result;
     if (this->isLeaf()) {
-        if (containsPoint(queryRectangle, this->points[0])) {
-            result.push_back(this->points[0]);
+        if (containsPoint(queryRectangle, this->points[from])) {
+            result.push_back(this->points[from]);
         }
     } else if (containsArea(queryRectangle, this->area)) {
         result.insert(result.end(), this->points + from, this->points + to + 1);
     }
 
     if (this->leftChild != nullptr && intersects(queryRectangle, this->leftChild->area)) {
-        vector<Point> childResult = this->leftChild->query(queryRectangle);
+        list<Point> childResult = this->leftChild->query(queryRectangle);
         childResult.insert(result.end(), childResult.begin(), childResult.end());
     }
     if (this->rightChild != nullptr && intersects(queryRectangle, this->rightChild->area)) {
-        vector<Point> childResult = this->rightChild->query(queryRectangle);
+        list<Point> childResult = this->rightChild->query(queryRectangle);
         childResult.insert(result.end(), childResult.begin(), childResult.end());
     }
     return result;
@@ -116,6 +116,10 @@ KDTreeEfficient *KDTreeEfficient::getLeftChild() {
 
 KDTreeEfficient *KDTreeEfficient::getRightChild() {
     return this->rightChild;
+}
+
+Point *KDTreeEfficient::getPoints() {
+    return this->points;
 }
 
 

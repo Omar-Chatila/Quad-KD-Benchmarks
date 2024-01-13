@@ -40,13 +40,15 @@ public:
 
     bool contains(Point p);
 
-    vector<Point> query(Area queryArea);
+    list<Point> query(Area queryArea);
 
     void buildTree();
 
     int getHeight();
 
     bool isLeaf();
+
+    Point *getPoints();
 
     KDTreeEfficient *getLeftChild();
 
