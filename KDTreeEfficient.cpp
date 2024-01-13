@@ -4,15 +4,17 @@
 
 #include "KDTreeEfficient.h"
 
-KDTreeEfficient::KDTreeEfficient(Point *points, int level, Area area, int from, int to) {
+KDTreeEfficient::KDTreeEfficient(Point *points, int level, Area &area, int from, int to) {
     this->points = points;
     this->area = area;
     this->from = from;
     this->to = to;
     if (level % 2 == 0) {
         this->xMedian = median(points, true, from, to);
+        this->yMedian = 0.0;
     } else {
         this->yMedian = median(points, false, from, to);
+        this->xMedian = 0.0;
     }
 }
 
@@ -20,6 +22,7 @@ void KDTreeEfficient::setVerticalChildren(int level) {
     int midIndex = (from + to) / 2;
     Area leftArea = Area(this->area.xMin, this->xMedian, this->area.yMin, this->area.yMax);
     Area rightArea = Area(this->xMedian, this->area.xMax, this->area.yMin, this->area.yMax);
+
     this->leftChild = new KDTreeEfficient(this->points, level + 1, leftArea, from, midIndex);
     this->rightChild = new KDTreeEfficient(this->points, level + 1, rightArea, midIndex + 1, to);
 }
@@ -106,6 +109,16 @@ vector<Point> KDTreeEfficient::query(Area queryRectangle) {
     }
     return result;
 }
+
+KDTreeEfficient *KDTreeEfficient::getLeftChild() {
+    return this->leftChild;
+}
+
+KDTreeEfficient *KDTreeEfficient::getRightChild() {
+    return this->rightChild;
+}
+
+
 
 
 

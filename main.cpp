@@ -1,4 +1,6 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include "QuadTree.h"
 #include "MyKDTree.h"
 #include "KDTreeEfficient.h"
@@ -7,57 +9,81 @@
 #pragma GCC optimize("O3")
 #pragma comment(linker, "/STACK:1000000000")
 
+
+static string treeToString(KDTreeEfficient *node) {
+    std::ostringstream oss;
+    oss << *node;
+    std::string result = oss.str();
+    if (node->getLeftChild() != nullptr) {
+        result = result + treeToString(node->getLeftChild());
+    }
+    if (node->getRightChild() != nullptr) {
+        result = result + treeToString(node->getRightChild());
+    }
+    return result;
+}
+
+
 int main() {
     FAST_IO();
-    std::cout << "Bench Build Time" << std::endl;
 
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<double> dis(0, 1000000);
+    std::ifstream inputFile(R"(C:\Users\omarc\CLionProjects\QuadKDBench\random_points.txt)");
 
-    int pointNumber = 10000;
-    Point pointArray[pointNumber];
-
-    for (int i = 0; i < pointNumber; i++) {
-        double x = dis(gen);
-        double y = dis(gen);
-        Point newPoint(x, y);
-        pointArray[i] = newPoint;
+    if (!inputFile.is_open()) {
+        std::cerr << "Error opening file\n";
+        return 1;
     }
 
+    int pointNumber = 100000;
 
-    Area area = Area(0, 1000000, 0, 1000000);
-    cout << "Start" << "\n";
+    std::vector<Point> points;
+    std::string line;
 
-    struct timespec start, now;
-    clock_gettime(CLOCK_MONOTONIC, &start);
+    while (std::getline(inputFile, line)) {
+        std::istringstream iss(line);
+        std::string token;
 
+        // Split the line into tokens using comma as the delimiter
+        getline(iss, token, ',');
+        double x = std::stod(token);
+
+        getline(iss, token, ',');
+        double y = std::stod(token);
+
+        points.emplace_back(x, y);
+    }
+    inputFile.close();
+
+    Point pointArray[100000];
+
+    int i = 0;
+    for (auto point: points) {
+        pointArray[i++] = point;
+    }
+
+    Area area{0, 10000, 0, 10000};
     KDTreeEfficient kdTreeEfficient(pointArray, 0, area, 0, pointNumber - 1);
     kdTreeEfficient.buildTree();
 
-    clock_gettime(CLOCK_MONOTONIC, &now);
-    printf("Elapsed: %lf miliseconds\n", (now.tv_sec - start.tv_sec) + 1E-6 * (now.tv_nsec - start.tv_nsec));
+    cout << kdTreeEfficient.getHeight() << endl;
 
-    cout << kdTreeEfficient.getHeight() << "\n";
+    std::ostringstream oss;
+    oss << treeToString(&kdTreeEfficient);
+    std::string result = oss.str(); // write this in output.txt like you did in Java
 
-    /*
-        points.push_back(Point{2, 4});
-        points.push_back(Point{5, 7});
-        points.push_back(Point{1, 3});
-        points.push_back(Point{8, 2});
-        points.push_back(Point{6, 9});
-        points.push_back(Point{3, 1});
-        points.push_back(Point{7, 5});
-        points.push_back(Point{4, 8});
-        points.push_back(Point{9, 6});
-        points.push_back(Point{0, 0});
-     */
+    std::string outputPath = R"(C:\Users\omarc\CLionProjects\QuadKDBench\output.txt)";
 
-
-    /*vector<Point> queried = myKdTree.query(Area(1, 8, 3, 9));
-    for (auto point: queried) {
-        cout << point.x << " : " << point.y << "\n";
+    std::ofstream outputFile(outputPath);
+    if (outputFile.is_open()) {
+        outputFile << result;
+        outputFile.close();
+        std::cout << "Result written to: " << outputPath << std::endl;
+    } else {
+        std::cerr << "Unable to open the output file!" << std::endl;
     }
-     */
+
+    return 0;
+
     return 0;
 }
+

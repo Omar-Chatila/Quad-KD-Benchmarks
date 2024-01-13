@@ -12,13 +12,21 @@ using namespace std;
 
 class KDTreeEfficient {
 
+    friend std::ostream &operator<<(std::ostream &os, const KDTreeEfficient &kdTreeEfficient) {
+        os << std::fixed << std::setprecision(1);
+
+        return os << "A:" << kdTreeEfficient.area << "f:" << kdTreeEfficient.from << "t:" << kdTreeEfficient.to
+                  << "xMed" << std::max(kdTreeEfficient.xMedian, 0.0) << "yMed"
+                  << std::max(kdTreeEfficient.yMedian, 0.0) << "\n";
+    }
+
 private:
 
     Point *points;
-    Area area;
+    Area area{};
     int from, to;
-    KDTreeEfficient *leftChild;
-    KDTreeEfficient *rightChild;
+    KDTreeEfficient *leftChild{};
+    KDTreeEfficient *rightChild{};
     double xMedian, yMedian;
 
     void buildTree(int level);
@@ -28,7 +36,7 @@ private:
     void setHorizontalChildren(int level);
 
 public:
-    KDTreeEfficient(Point *points, int level, Area area, int from, int to);
+    KDTreeEfficient(Point *points, int level, Area &area, int from, int to);
 
     bool contains(Point p);
 
@@ -39,6 +47,10 @@ public:
     int getHeight();
 
     bool isLeaf();
+
+    KDTreeEfficient *getLeftChild();
+
+    KDTreeEfficient *getRightChild();
 };
 
 

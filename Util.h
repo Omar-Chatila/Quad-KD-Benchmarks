@@ -6,6 +6,7 @@
 
 #include "vector"
 #include "cstdlib"
+#include "iostream"
 
 using namespace std;
 
@@ -23,6 +24,11 @@ struct Point {
 };
 
 struct Area {
+    friend std::ostream &operator<<(std::ostream &os, const Area &area) {
+        return os << "[" << (area.xMin) << ":" << (area.xMax) << "] : ["
+                  << (area.yMin) << ":" << (area.yMax) << ']';
+    }
+
     double xMin, xMax, yMin, yMax;
 };
 
@@ -41,15 +47,15 @@ inline Area *splitArea(Area area) {
     return areas;
 }
 
-inline bool intersects(Area first, Area other) {
+inline bool intersects(Area &first, Area &other) {
     return first.xMin < other.xMax && first.xMax > other.xMin && first.yMax > other.yMin && first.yMin < other.yMax;
 }
 
-inline bool containsArea(Area first, Area other) {
+inline bool containsArea(Area &first, Area &other) {
     return first.xMin <= other.xMin && first.xMax >= other.xMax && first.yMin <= other.yMin && first.yMax >= other.yMax;
 }
 
-inline bool containsPoint(Area area, Point point) {
+inline bool containsPoint(Area &area, Point &point) {
     return (point.x >= area.xMin && point.y >= area.yMin && point.x <= area.xMax && point.y <= area.yMax);
 }
 
