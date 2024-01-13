@@ -1,0 +1,3 @@
+C:/Users/omarc/CLionProjects/QuadKDBench/cmake-build-debug/CMakeFiles/QuadKDBench.dir
+C:/Users/omarc/CLionProjects/QuadKDBench/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/omarc/CLionProjects/QuadKDBench/cmake-build-debug/CMakeFiles/rebuild_cache.dir
