@@ -77,17 +77,33 @@ static string qtToString(QuadTree *node) {
     return result;
 }
 
+static void writeQTtoFile(QuadTree &quadTree) {
+    string treeString = qtToString(&quadTree);
+    std::string outputPath = R"(C:\Users\omarc\CLionProjects\QuadKDBench\qtBuildOutput.txt)";
+    writeStringToFile(treeString, outputPath);
+}
+
 int main() {
     FAST_IO();
-    vector<Point> points = getRandomPoints(10);
+    vector<Point> points = getRandomPoints(100000);
+    cout << points.size() << "\n";
     Area area{0, 10000, 0, 10000};
     QuadTree quadTree(area, points);
     quadTree.buildTree();
 
-    string treeString = qtToString(&quadTree);
-    std::string outputPath = R"(C:\Users\omarc\CLionProjects\QuadKDBench\qtBuildOutput.txt)";
+    //writeQTtoFile(quadTree);
 
-    writeStringToFile(treeString, outputPath);
+    Area queryArea{234, 7000, 2000, 9000};
+
+    list<Point> queried = quadTree.query(queryArea);
+    std::ostringstream oss;
+    for (auto point: queried) {
+        oss << point << "\n";
+    }
+    std::string result = oss.str();
+
+    string outputPath = R"(C:\Users\omarc\CLionProjects\QuadKDBench\qtQueryOutput.txt)";
+    writeStringToFile(result, outputPath);
 
     return 0;
 }

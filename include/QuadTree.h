@@ -15,14 +15,14 @@ class QuadTree {
     friend std::ostream &operator<<(std::ostream &os, const QuadTree &quadTree) {
         os << std::fixed << std::setprecision(1);
         if (!quadTree.elements.empty())
-            return os << "A:" << quadTree.square << "elements:" << quadTree.elements.at(0) << "\n";
+            return os << "A:" << quadTree.square << "elements:" << quadTree.elements.front() << "\n";
         return os << "A:" << quadTree.square << "\n";
     }
 
 private:
     QuadTree *children[4]{};
     Area square{};
-    vector<Point> elements;
+    list<Point> elements;
 
     static QuadTree *locateQuadrant(double pointX, double pointY, QuadTree *current);
 
@@ -39,7 +39,7 @@ public:
 
     void buildTree();
 
-    vector<Point> query(Area queryRectangle);
+    list<Point> query(Area queryRectangle);
 
     bool contains(Point point);
 

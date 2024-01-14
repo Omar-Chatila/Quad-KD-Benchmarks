@@ -52,29 +52,28 @@ void QuadTree::partition() {
         }
         childrenElements[quadrant].push_back(point);
     }
-    elements.clear();
+    //elements.clear();
 
     for (int i = 0; i < 4; i++) {
         children[i] = new QuadTree(quadrants[i], childrenElements[i]);
     }
 }
 
-vector<Point> QuadTree::query(Area queryRectangle) {
-    if (!intersects(this->square, queryRectangle)) {
-        return {};
-    }
-    vector<Point> result;
+std::list<Point> QuadTree::query(Area queryRectangle) {
+    list<Point> result;
     if (this->isPointLeaf()) {
-        if (containsPoint(queryRectangle, this->elements.at(0))) {
-            result.push_back(this->elements.at(0));
+        if (containsPoint(queryRectangle, this->elements.front())) {
+            result.push_back(this->elements.front());
+            return result;
         }
     } else if (containsArea(queryRectangle, this->square)) {
         result.insert(result.end(), this->elements.begin(), this->elements.end());
+        return result;
     }
 
     for (auto child: this->children) {
         if (child != nullptr && intersects(queryRectangle, child->square)) {
-            vector<Point> childResult = child->query(queryRectangle);
+            list<Point> childResult = child->query(queryRectangle);
             childResult.insert(result.end(), childResult.begin(), childResult.end());
         }
     }
@@ -82,7 +81,7 @@ vector<Point> QuadTree::query(Area queryRectangle) {
 }
 
 bool QuadTree::isPointLeaf() {
-    return !this->elements.empty();
+    return this->elements.size() == 1;
 }
 
 bool QuadTree::contains(Point point) {
@@ -97,16 +96,16 @@ bool QuadTree::contains(Point point) {
 QuadTree *QuadTree::locateQuadrant(double pointX, double pointY, QuadTree *current) {
     double centerX = (current->square.xMin + current->square.xMax) / 2.0;
     double centerY = (current->square.yMin + current->square.yMax) / 2.0;
-    if (pointX > centerX && pointY > centerY) {
-        current = current->children[NORTH_EAST];
-    } else if (pointX <= centerX && pointY > centerY) {
-        current = current->children[NORTH_WEST];
-    } else if (pointX <= centerX && pointY <= centerY) {
-        current = current->children[SOUTH_WEST];
-    } else {
-        current = current->children[SOUTH_EAST];
+
+    int quadrant = 0B00;           // lsb W/E msb msb S/N
+    if (pointX > centerX) {          // is East
+        quadrant |= 0B01;
     }
-    return current;
+    if (pointY <= centerY) {         // is South
+        quadrant |= 0B10;
+    }
+
+    return current->children[quadrant];
 }
 
 bool QuadTree::isEmpty() {
