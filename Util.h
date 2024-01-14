@@ -7,6 +7,9 @@
 #include "vector"
 #include "cstdlib"
 #include "iostream"
+#include <fstream>
+#include <sstream>
+
 
 using namespace std;
 
@@ -23,7 +26,9 @@ struct Point {
     }
 
     bool operator==(const Point &other) const {
-        return x == other.x && y == other.y;
+        double epsilon = 1e-6;
+        return std::abs(x - other.x) < epsilon &&
+               std::abs(y - other.y) < epsilon;
     }
 };
 
@@ -128,4 +133,31 @@ inline double getMedian(vector<Point> &list, bool x) {
         }
         return list.at(0).y;
     }
+}
+
+inline vector<Point> getRandomPoints(int pointNumber) {
+    std::ifstream inputFile(R"(C:\Users\omarc\CLionProjects\QuadKDBench\random_points.txt)");
+    if (!inputFile.is_open()) {
+        std::cerr << "Error opening file\n";
+    }
+
+    std::vector<Point> points;
+    std::string line;
+
+    while (std::getline(inputFile, line) && pointNumber > 0) {
+        std::istringstream iss(line);
+        std::string token;
+
+        getline(iss, token, ',');
+        double x = std::stod(token);
+
+        getline(iss, token, ',');
+        double y = std::stod(token);
+
+        points.emplace_back(x, y);
+        pointNumber--;
+    }
+    inputFile.close();
+
+    return points;
 }

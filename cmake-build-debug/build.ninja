@@ -73,6 +73,12 @@ build CMakeFiles/QuadKDBench.dir/MyKDTree.cpp.obj: CXX_COMPILER__QuadKDBench_uns
   OBJECT_DIR = CMakeFiles\QuadKDBench.dir
   OBJECT_FILE_DIR = CMakeFiles\QuadKDBench.dir
 
+build CMakeFiles/QuadKDBench.dir/KDEfficientHelper.cpp.obj: CXX_COMPILER__QuadKDBench_unscanned_Debug C$:/Users/omarc/CLionProjects/QuadKDBench/KDEfficientHelper.cpp || cmake_object_order_depends_target_QuadKDBench
+  DEP_FILE = CMakeFiles\QuadKDBench.dir\KDEfficientHelper.cpp.obj.d
+  FLAGS = -g -std=gnu++23 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\QuadKDBench.dir
+  OBJECT_FILE_DIR = CMakeFiles\QuadKDBench.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target QuadKDBench
@@ -81,7 +87,7 @@ build CMakeFiles/QuadKDBench.dir/MyKDTree.cpp.obj: CXX_COMPILER__QuadKDBench_uns
 #############################################
 # Link the executable QuadKDBench.exe
 
-build QuadKDBench.exe: CXX_EXECUTABLE_LINKER__QuadKDBench_Debug CMakeFiles/QuadKDBench.dir/main.cpp.obj CMakeFiles/QuadKDBench.dir/QuadTree.cpp.obj CMakeFiles/QuadKDBench.dir/KDTreeEfficient.cpp.obj CMakeFiles/QuadKDBench.dir/MyKDTree.cpp.obj
+build QuadKDBench.exe: CXX_EXECUTABLE_LINKER__QuadKDBench_Debug CMakeFiles/QuadKDBench.dir/main.cpp.obj CMakeFiles/QuadKDBench.dir/QuadTree.cpp.obj CMakeFiles/QuadKDBench.dir/KDTreeEfficient.cpp.obj CMakeFiles/QuadKDBench.dir/MyKDTree.cpp.obj CMakeFiles/QuadKDBench.dir/KDEfficientHelper.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\QuadKDBench.dir

@@ -11,4 +11,6 @@ add_executable(QuadKDBench main.cpp
         KDTreeEfficient.h
         MyKDTree.cpp
         MyKDTree.h
+        KDEfficientHelper.cpp
+        KDEfficientHelper.h
 )

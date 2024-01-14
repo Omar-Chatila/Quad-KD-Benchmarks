@@ -3,6 +3,7 @@
 //
 
 #include "KDTreeEfficient.h"
+#include "KDEfficientHelper.h"
 #include "Util.h"
 
 #include <benchmark/benchmark.h>
@@ -38,9 +39,26 @@ static void buildTree(benchmark::State &state) {
     state.SetComplexityN(state.range(0));
 }
 
+static void queryTree(benchmark::State &state) {
+
+    KDTreeEfficient kdTreeEfficient = KDEfficientHelper::buildTreeFromFile(state.range(0));
+    kdTreeEfficient.buildTree();
+    Area bigArea{234, 7000, 2000, 9000};
+
+    for (auto _: state) {
+        benchmark::DoNotOptimize(kdTreeEfficient);
+        kdTreeEfficient.query(bigArea);
+    }
+
+    state.SetComplexityN(state.range(0));
+}
+
 #define TEST(func) BENCHMARK(algo1)->Name("func")->DenseRange(START, END, STEPS);
 
 BENCHMARK(buildTree)->Name("Build KD-Tree-Efficient")->RangeMultiplier(2)->Range(1000, END)->Complexity(
+        benchmark::oN)->Unit(benchmark::kMillisecond);
+
+BENCHMARK(queryTree)->Name("Query KD-E - Variable PointCount")->RangeMultiplier(2)->Range(1000, END)->Complexity(
         benchmark::oN)->Unit(benchmark::kMillisecond);
 
 BENCHMARK_MAIN();
