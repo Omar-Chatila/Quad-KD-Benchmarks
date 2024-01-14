@@ -2,7 +2,7 @@
 // Created by omarc on 12/01/2024.
 //
 
-#include "QuadTree.h"
+#include "../include/QuadTree.h"
 
 QuadTree::QuadTree(Area square, vector<Point> &elements) {
     this->square = square;
@@ -36,9 +36,9 @@ void QuadTree::buildTree() {
 }
 
 void QuadTree::partition() {
-    Area *quadrants = splitArea(this->square);
     double xMid = (this->square.xMin + this->square.xMax) / 2.0;
     double yMid = (this->square.yMin + this->square.yMax) / 2.0;
+    Area *quadrants = splitArea(this->square, xMid, yMid);
     vector<Point> childrenElements[4];
 
     for (auto point: elements) {
@@ -71,7 +71,7 @@ vector<Point> QuadTree::query(Area queryRectangle) {
     } else if (containsArea(queryRectangle, this->square)) {
         result.insert(result.end(), this->elements.begin(), this->elements.end());
     }
-    
+
     for (auto child: this->children) {
         if (child != nullptr && intersects(queryRectangle, child->square)) {
             vector<Point> childResult = child->query(queryRectangle);
@@ -128,6 +128,22 @@ void QuadTree::add(Point point) {
     } else {
         current->elements.push_back(point);
     }
+}
+
+QuadTree *QuadTree::getNorthEast() {
+    return this->children[NORTH_EAST];
+}
+
+QuadTree *QuadTree::getNorthWest() {
+    return this->children[NORTH_WEST];
+}
+
+QuadTree *QuadTree::getSouthWest() {
+    return this->children[SOUTH_WEST];
+}
+
+QuadTree *QuadTree::getSouthEast() {
+    return this->children[SOUTH_EAST];
 }
 
 

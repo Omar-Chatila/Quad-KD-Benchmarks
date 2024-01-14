@@ -45,9 +45,7 @@ struct SplitLine {
     double fromX, fromY, toX, toY;
 };
 
-inline Area *splitArea(Area area) {
-    double xMid = (area.xMin + area.xMax) / 2.0;
-    double yMid = (area.yMin + area.yMax) / 2.0;
+inline Area *splitArea(Area area, double xMid, double yMid) {
     Area *areas = (Area *) std::malloc(sizeof(Area) << 2);
     areas[NORTH_EAST] = Area(xMid, area.xMax, yMid, area.yMax);
     areas[NORTH_WEST] = Area(area.xMin, xMid, yMid, area.yMax);

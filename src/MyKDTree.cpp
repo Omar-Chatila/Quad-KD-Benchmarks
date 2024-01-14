@@ -2,7 +2,7 @@
 // Created by omarc on 12/01/2024.
 //
 
-#include "MyKDTree.h"
+#include "../include/MyKDTree.h"
 
 MyKDTree::MyKDTree(vector<Point> &points, Area area, int level) {
     this->points = points;

@@ -2,11 +2,17 @@
 // Created by omarc on 13/01/2024.
 //
 
-#include "KDEfficientHelper.h"
+#pragma once
+
+#include <iostream>
+#include <fstream>
+#include <sstream>
 #include "KDTreeEfficient.h"
 #include "Util.h"
 
-KDTreeEfficient KDEfficientHelper::buildTreeFromFile(int pointNumber) {
+using namespace std;
+
+inline KDTreeEfficient buildTreeFromFile(int pointNumber) {
     std::ifstream inputFile(R"(C:\Users\omarc\CLionProjects\QuadKDBench\random_points.txt)");
     if (!inputFile.is_open()) {
         std::cerr << "Error opening file\n";
@@ -26,14 +32,10 @@ KDTreeEfficient KDEfficientHelper::buildTreeFromFile(int pointNumber) {
     KDTreeEfficient kdTreeEfficient(pointArray, 0, area, start, size);
     kdTreeEfficient.buildTree();
 
-    cout << kdTreeEfficient.getHeight() << endl;
-
-    //writeTreeToFile(kdTreeEfficient);
-
     return kdTreeEfficient;
 }
 
-list<Point> KDEfficientHelper::testQuery(KDTreeEfficient &kdTreeEfficient) {
+inline list<Point> testQuery(KDTreeEfficient &kdTreeEfficient) {
     Area queryArea(234, 7000, 2000, 9000);
     struct timespec start{}, now{};
     clock_gettime(CLOCK_MONOTONIC, &start);
@@ -42,4 +44,5 @@ list<Point> KDEfficientHelper::testQuery(KDTreeEfficient &kdTreeEfficient) {
     printf("Elapsed: %lf seconds\n", (now.tv_sec - start.tv_sec) + 1e-9 * (now.tv_nsec - start.tv_nsec));
     return result;
 }
+
 

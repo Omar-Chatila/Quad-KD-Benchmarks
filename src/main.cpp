@@ -1,8 +1,9 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include "KDTreeEfficient.h"
-#include "KDEfficientHelper.h"
+#include "../include/KDTreeEfficient.h"
+#include "../include/KDEfficientHelper.h"
+#include "../include/QuadTree.h"
 
 #define FAST_IO() ios_base::sync_with_stdio(false); cin.tie(NULL)
 #pragma GCC optimize("O3")
@@ -42,10 +43,9 @@ static void writeTreeToFile(KDTreeEfficient &kdTreeEfficient) {
     writeStringToFile(result, outputPath);
 }
 
-int main() {
-    FAST_IO();
-    KDTreeEfficient kdTreeEfficient = KDEfficientHelper::buildTreeFromFile(100000);
-    list<Point> queryResult = KDEfficientHelper::testQuery(kdTreeEfficient);
+static void testKDE_Query() {
+    KDTreeEfficient kdTreeEfficient = buildTreeFromFile(100000);
+    list<Point> queryResult = testQuery(kdTreeEfficient);
 
     std::string outputPath = R"(C:\Users\omarc\CLionProjects\QuadKDBench\queryOutput.txt)";
 
@@ -56,6 +56,39 @@ int main() {
 
     string result = oss.str();
     writeStringToFile(result, outputPath);
+}
+
+static string qtToString(QuadTree *node) {
+    std::ostringstream oss;
+    oss << *node;
+    std::string result = oss.str();
+    if (node->getNorthEast() != nullptr) {
+        result = result + qtToString(node->getNorthEast());
+    }
+    if (node->getNorthWest() != nullptr) {
+        result = result + qtToString(node->getNorthWest());
+    }
+    if (node->getSouthWest() != nullptr) {
+        result = result + qtToString(node->getSouthWest());
+    }
+    if (node->getSouthEast() != nullptr) {
+        result = result + qtToString(node->getSouthEast());
+    }
+    return result;
+}
+
+int main() {
+    FAST_IO();
+    vector<Point> points = getRandomPoints(10);
+    Area area{0, 10000, 0, 10000};
+    QuadTree quadTree(area, points);
+    quadTree.buildTree();
+
+    string treeString = qtToString(&quadTree);
+    std::string outputPath = R"(C:\Users\omarc\CLionProjects\QuadKDBench\qtBuildOutput.txt)";
+
+    writeStringToFile(treeString, outputPath);
+
     return 0;
 }
 

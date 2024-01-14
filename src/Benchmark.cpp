@@ -2,9 +2,9 @@
 // Created by omarc on 13/01/2024.
 //
 
-#include "KDTreeEfficient.h"
-#include "KDEfficientHelper.h"
-#include "Util.h"
+#include "../include/KDTreeEfficient.h"
+#include "../include/KDEfficientHelper.h"
+#include "../include/Util.h"
 
 #include <benchmark/benchmark.h>
 
@@ -13,7 +13,7 @@
 
 using namespace std;
 
-static void buildTree(benchmark::State &state) {
+static void buildKDETree(benchmark::State &state) {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<double> dis(0, 100000);
@@ -39,10 +39,9 @@ static void buildTree(benchmark::State &state) {
     state.SetComplexityN(state.range(0));
 }
 
-static void queryTree(benchmark::State &state) {
+static void queryKDETree(benchmark::State &state) {
 
-    KDTreeEfficient kdTreeEfficient = KDEfficientHelper::buildTreeFromFile(state.range(0));
-    kdTreeEfficient.buildTree();
+    KDTreeEfficient kdTreeEfficient = buildTreeFromFile(state.range(0));
     Area bigArea{234, 7000, 2000, 9000};
 
     for (auto _: state) {
@@ -55,10 +54,10 @@ static void queryTree(benchmark::State &state) {
 
 #define TEST(func) BENCHMARK(algo1)->Name("func")->DenseRange(START, END, STEPS);
 
-BENCHMARK(buildTree)->Name("Build KD-Tree-Efficient")->RangeMultiplier(2)->Range(1000, END)->Complexity(
-        benchmark::oN)->Unit(benchmark::kMillisecond);
+BENCHMARK(buildKDETree)->Name("Build KD-Tree-Efficient")->RangeMultiplier(2)->Range(1000, END)->Complexity(
+        benchmark::oN)->Unit(benchmark::kMillisecond)->Iterations(200);
 
-BENCHMARK(queryTree)->Name("Query KD-E - Variable PointCount")->RangeMultiplier(2)->Range(1000, END)->Complexity(
-        benchmark::oN)->Unit(benchmark::kMillisecond);
+BENCHMARK(queryKDETree)->Name("Query KD-E - Variable PointCount")->RangeMultiplier(2)->Range(1000, END)->Complexity(
+        benchmark::oN)->Unit(benchmark::kMillisecond)->Iterations(200);
 
 BENCHMARK_MAIN();

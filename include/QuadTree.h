@@ -11,6 +11,14 @@
 using namespace std;
 
 class QuadTree {
+
+    friend std::ostream &operator<<(std::ostream &os, const QuadTree &quadTree) {
+        os << std::fixed << std::setprecision(1);
+        if (!quadTree.elements.empty())
+            return os << "A:" << quadTree.square << "elements:" << quadTree.elements.at(0) << "\n";
+        return os << "A:" << quadTree.square << "\n";
+    }
+
 private:
     QuadTree *children[4]{};
     Area square{};
@@ -38,6 +46,15 @@ public:
     bool isEmpty();
 
     void add(Point point);
+
+    QuadTree *getNorthEast();
+
+    QuadTree *getNorthWest();
+
+    QuadTree *getSouthWest();
+
+    QuadTree *getSouthEast();
+
 };
 
 

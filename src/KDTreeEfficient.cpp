@@ -2,7 +2,7 @@
 // Created by omarc on 12/01/2024.
 //
 
-#include "KDTreeEfficient.h"
+#include "../include/KDTreeEfficient.h"
 
 KDTreeEfficient::KDTreeEfficient(Point *points, int level, Area &area, int from, int to) {
     this->points = points;
