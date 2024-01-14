@@ -64,8 +64,8 @@ std::list<Point> QuadTree::query(Area queryRectangle) {
     if (this->isPointLeaf()) {
         if (containsPoint(queryRectangle, this->elements.front())) {
             result.push_back(this->elements.front());
-            return result;
         }
+        return result;
     } else if (containsArea(queryRectangle, this->square)) {
         result.insert(result.end(), this->elements.begin(), this->elements.end());
         return result;

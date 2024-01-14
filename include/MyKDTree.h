@@ -17,9 +17,6 @@ private:
     int level;
     vector<Point> points;
     MyKDTree *leftChild, *rightChild;
-    SplitLine verticalSplitLine, horizontalSplitLine;
-
-    void buildTree(int level);
 
     void setVerticalChildren(int level);
 
@@ -33,15 +30,15 @@ public:
 
     bool contains(Point p);
 
-    vector<Point> query(Area queryArea);
+    list<Point> query(Area queryArea);
 
     void buildTree();
+
+    void buildTree(int level);
 
     int getHeight();
 
     bool isLeaf();
-
-    void setSplitLines();
 
     bool isEmpty();
 

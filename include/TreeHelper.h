@@ -8,16 +8,12 @@
 #include <fstream>
 #include <sstream>
 #include "KDTreeEfficient.h"
+#include "QuadTree.h"
 #include "Util.h"
 
 using namespace std;
 
-inline KDTreeEfficient buildTreeFromFile(int pointNumber) {
-    std::ifstream inputFile(R"(C:\Users\omarc\CLionProjects\QuadKDBench\random_points.txt)");
-    if (!inputFile.is_open()) {
-        std::cerr << "Error opening file\n";
-    }
-
+inline KDTreeEfficient buildEKDTreeFromFile(int pointNumber) {
     int size = pointNumber - 1;
     Point pointArray[pointNumber];
     std::vector<Point> points = getRandomPoints(pointNumber);
@@ -33,6 +29,14 @@ inline KDTreeEfficient buildTreeFromFile(int pointNumber) {
     kdTreeEfficient.buildTree();
 
     return kdTreeEfficient;
+}
+
+inline QuadTree buildQuadTreeFromFile(int pointNumber) {
+    std::vector<Point> points = getRandomPoints(pointNumber);
+    Area area{0, 10000, 0, 10000};
+    QuadTree quadTree(area, points);
+    quadTree.buildTree();
+    return quadTree;
 }
 
 inline list<Point> testQuery(KDTreeEfficient &kdTreeEfficient) {

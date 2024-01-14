@@ -9,11 +9,11 @@ MyKDTree::MyKDTree(vector<Point> &points, Area area, int level) {
     this->area = area;
     this->level = level;
     if (level % 2 == 0) {
-        sort(points.begin(), points.end(), [](const Point &a, const Point &b) {
+        sort(this->points.begin(), this->points.end(), [](const Point &a, const Point &b) {
             return a.x < b.x;
         });
     } else {
-        sort(points.begin(), points.end(), [](const Point &a, const Point &b) {
+        sort(this->points.begin(), this->points.end(), [](const Point &a, const Point &b) {
             return a.y < b.y;
         });
     }
@@ -22,7 +22,7 @@ MyKDTree::MyKDTree(vector<Point> &points, Area area, int level) {
 void MyKDTree::buildTree(int lev) {
     if (this->points.size() > 1) {
         // vertical split
-        if (level % 2 == 0) {
+        if (lev % 2 == 0) {
             this->setVerticalChildren(lev);
         } else {
             // horizontal split
@@ -57,29 +57,31 @@ bool MyKDTree::contains(Point point) {
     MyKDTree *current = this;
     while (!current->isLeaf()) {
         if (current->level % 2 == 0) {
-            current = current->verticalSplitLine.fromX >= point.x ? current->leftChild : current->rightChild;
+            current = getMedian(current->points, true) >= point.x ? current->leftChild : current->rightChild;
         } else {
-            current = current->horizontalSplitLine.fromY >= point.y ? current->leftChild : current->rightChild;
+            current = getMedian(current->points, false) >= point.y ? current->leftChild : current->rightChild;
         }
     }
     return std::find(current->points.begin(), current->points.end(), point) != current->points.end();
 }
 
-vector<Point> MyKDTree::query(Area queryRectangle) {
-    vector<Point> result = vector<Point>();
+list<Point> MyKDTree::query(Area queryRectangle) {
+    list<Point> result;
     if (this->isLeaf()) {
         if (containsPoint(queryRectangle, this->points.at(0))) {
             result.push_back(this->points.at(0));
         }
+        return result;
     } else if (containsArea(queryRectangle, this->area)) {
         result.insert(result.end(), this->points.begin(), this->points.end());
+        return result;
     }
     if (this->leftChild != nullptr && intersects(queryRectangle, this->leftChild->area)) {
-        vector<Point> childResult = this->leftChild->query(queryRectangle);
+        list<Point> childResult = this->leftChild->query(queryRectangle);
         result.insert(result.end(), childResult.begin(), childResult.end());
     }
     if (this->rightChild != nullptr && intersects(queryRectangle, this->rightChild->area)) {
-        vector<Point> childResult = this->rightChild->query(queryRectangle);
+        list<Point> childResult = this->rightChild->query(queryRectangle);
         result.insert(result.end(), childResult.begin(), childResult.end());
     }
     return result;
@@ -105,16 +107,6 @@ bool MyKDTree::isLeaf() {
     return this->points.size() == 1;
 }
 
-void MyKDTree::setSplitLines() {
-    if (level % 2 == 0) {
-        double xMedian = getMedian(points, true);
-        verticalSplitLine = SplitLine(xMedian, area.yMin, xMedian, area.yMax);
-    } else {
-        double yMedian = getMedian(points, false);
-        horizontalSplitLine = SplitLine(area.xMin, yMedian, area.xMax, yMedian);
-    }
-}
-
 bool MyKDTree::isEmpty() {
     return this->points.empty();
 }
@@ -124,13 +116,13 @@ void MyKDTree::add(Point point) {
     int lev = 0;
     while (!current->isLeaf()) {
         if ((lev++ % 2) == 0) {
-            if (point.x <= current->verticalSplitLine.toX) {
+            if (point.x <= getMedian(current->points, true)) {
                 current = current->leftChild;
             } else {
                 current = current->rightChild;
             }
         } else {
-            if (point.y <= current->horizontalSplitLine.toY) {
+            if (point.y <= getMedian(current->points, false)) {
                 current = current->leftChild;
             } else {
                 current = current->rightChild;
@@ -158,5 +150,4 @@ void MyKDTree::appendPoint(Point point, int level) {
         });
 
     }
-    setSplitLines();
 }

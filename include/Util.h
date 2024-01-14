@@ -111,7 +111,6 @@ inline vector<vector<Point>> splitVector(vector<Point> &originalVector) {
     vector<Point> subVector1(originalVector.begin(), originalVector.begin() + midIndex);
     vector<Point> subVector2(originalVector.begin() + midIndex, originalVector.end());
 
-
     return {subVector1, subVector2};
 }
 

@@ -11,7 +11,7 @@ add_executable(QuadKDBench src/main.cpp
         include/KDTreeEfficient.h
         src/MyKDTree.cpp
         include/MyKDTree.h
-        include/KDEfficientHelper.h
+        include/TreeHelper.h
 )
 
 #target_link_libraries(QuadKDBench benchmark::benchmark)

@@ -2,8 +2,9 @@
 #include <fstream>
 #include <sstream>
 #include "../include/KDTreeEfficient.h"
-#include "../include/KDEfficientHelper.h"
+#include "../include/TreeHelper.h"
 #include "../include/QuadTree.h"
+#include "../include/MyKDTree.h"
 
 #define FAST_IO() ios_base::sync_with_stdio(false); cin.tie(NULL)
 #pragma GCC optimize("O3")
@@ -44,7 +45,7 @@ static void writeTreeToFile(KDTreeEfficient &kdTreeEfficient) {
 }
 
 static void testKDE_Query() {
-    KDTreeEfficient kdTreeEfficient = buildTreeFromFile(100000);
+    KDTreeEfficient kdTreeEfficient = buildEKDTreeFromFile(100000);
     list<Point> queryResult = testQuery(kdTreeEfficient);
 
     std::string outputPath = R"(C:\Users\omarc\CLionProjects\QuadKDBench\queryOutput.txt)";
@@ -83,8 +84,7 @@ static void writeQTtoFile(QuadTree &quadTree) {
     writeStringToFile(treeString, outputPath);
 }
 
-int main() {
-    FAST_IO();
+static void testQT_Query() {
     vector<Point> points = getRandomPoints(100000);
     cout << points.size() << "\n";
     Area area{0, 10000, 0, 10000};
@@ -104,6 +104,37 @@ int main() {
 
     string outputPath = R"(C:\Users\omarc\CLionProjects\QuadKDBench\qtQueryOutput.txt)";
     writeStringToFile(result, outputPath);
+}
+
+int main() {
+    FAST_IO();
+
+    vector<Point> points = getRandomPoints(100000);
+    cout << points.size() << "\n";
+    Area area{0, 10000, 0, 10000};
+
+    Area queryArea{234, 7000, 2000, 9000};
+
+    int actual = 0;
+
+    cout << "actual: " << "\n";
+    for (auto point: points) {
+        if (containsPoint(queryArea, point)) {
+            actual++;
+        }
+    }
+    cout << actual << "\n";
+
+    MyKDTree myKdTree(points, area, 0);
+    myKdTree.buildTree();
+
+    list<Point> queried = myKdTree.query(queryArea);
+    cout << "queried: " << "\n";
+    int queriedNo = 0;
+    for (auto point: queried) {
+        queriedNo++;
+    }
+    cout << "Actual " << actual << ". queried " << queriedNo << endl;
 
     return 0;
 }

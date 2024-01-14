@@ -94,8 +94,8 @@ std::list<Point> KDTreeEfficient::query(Area queryRectangle) {
     if (this->isLeaf()) {
         if (containsPoint(queryRectangle, this->points[from])) {
             result.push_back(this->points[from]);
-            return result;
         }
+        return result;
     } else if (containsArea(queryRectangle, this->area)) {
         result.insert(result.end(), this->points + from, this->points + to + 1);
         return result;

@@ -3,7 +3,7 @@
 //
 
 #include "../include/KDTreeEfficient.h"
-#include "../include/KDEfficientHelper.h"
+#include "../include/TreeHelper.h"
 #include "../include/QuadTree.h"
 #include "../include/Util.h"
 
@@ -42,7 +42,7 @@ static void buildKDETree(benchmark::State &state) {
 
 static void queryKDETree(benchmark::State &state) {
 
-    KDTreeEfficient kdTreeEfficient = buildTreeFromFile(state.range(0));
+    KDTreeEfficient kdTreeEfficient = buildEKDTreeFromFile(state.range(0));
     Area bigArea{234, 7000, 2000, 9000};
 
     for (auto _: state) {
@@ -79,14 +79,29 @@ static void buildQuadTree(benchmark::State &state) {
     state.SetComplexityN(state.range(0));
 }
 
+static void queryQuadTree(benchmark::State &state) {
+
+    QuadTree quadTree = buildQuadTreeFromFile(state.range(0));
+    Area bigArea{234, 7000, 2000, 9000};
+
+    for (auto _: state) {
+        benchmark::DoNotOptimize(quadTree);
+        quadTree.query(bigArea);
+    }
+
+    state.SetComplexityN(state.range(0));
+}
+
 #define TEST(func) BENCHMARK(algo1)->Name("func")->DenseRange(START, END, STEPS);
 
-BENCHMARK(buildKDETree)->Name("Build KD-Tree-Efficient")->RangeMultiplier(2)->Range(1000, END)->Complexity(
-        benchmark::oN)->Unit(benchmark::kMillisecond)->Iterations(200);
+BENCHMARK(buildKDETree)->Name("Build KD-Tree-Efficient")->RangeMultiplier(2)->Range(1000, END)
+        ->Complexity(benchmark::oN)->Unit(benchmark::kMillisecond)->Iterations(200);
+BENCHMARK(queryKDETree)->Name("Query KD-E - Variable PointCount")->RangeMultiplier(2)->Range(1000, END)
+        ->Complexity(benchmark::oN)->Unit(benchmark::kMillisecond)->Iterations(200);
 
-BENCHMARK(queryKDETree)->Name("Query KD-E - Variable PointCount")->RangeMultiplier(2)->Range(1000, END)->Complexity(
-        benchmark::oN)->Unit(benchmark::kMillisecond)->Iterations(200);
 BENCHMARK(buildQuadTree)->Name("Build Quadtree")->RangeMultiplier(2)->Range(1000, END)->Complexity(
         benchmark::oN)->Unit(benchmark::kMillisecond)->Iterations(200);
+BENCHMARK(queryQuadTree)->Name("Query Quadtree - Variable PointCount")->RangeMultiplier(2)->Range(1000, END)
+        ->Complexity(benchmark::oN)->Unit(benchmark::kMillisecond)->Iterations(200);
 
 BENCHMARK_MAIN();
