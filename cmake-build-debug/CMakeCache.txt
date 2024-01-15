@@ -14,6 +14,54 @@
 # EXTERNAL cache entries
 ########################
 
+//Build a 32 bit version of the library.
+BENCHMARK_BUILD_32_BITS:BOOL=OFF
+
+//Allow the downloading and in-tree building of unmet dependencies
+BENCHMARK_DOWNLOAD_DEPENDENCIES:BOOL=OFF
+
+//Enable building and running the assembly tests
+BENCHMARK_ENABLE_ASSEMBLY_TESTS:BOOL=OFF
+
+//Build documentation with Doxygen.
+BENCHMARK_ENABLE_DOXYGEN:BOOL=OFF
+
+//Enable the use of exceptions in the benchmark library.
+BENCHMARK_ENABLE_EXCEPTIONS:BOOL=ON
+
+//Enable building the unit tests which depend on gtest
+BENCHMARK_ENABLE_GTEST_TESTS:BOOL=ON
+
+//Enable installation of benchmark. (Projects embedding benchmark
+// may want to turn this OFF.)
+BENCHMARK_ENABLE_INSTALL:BOOL=ON
+
+//Enable performance counters provided by libpfm
+BENCHMARK_ENABLE_LIBPFM:BOOL=OFF
+
+//Enable link time optimisation of the benchmark library.
+BENCHMARK_ENABLE_LTO:BOOL=OFF
+
+//Enable testing of the benchmark library.
+BENCHMARK_ENABLE_TESTING:BOOL=OFF
+
+//Build Release candidates with -Werror.
+BENCHMARK_ENABLE_WERROR:BOOL=ON
+
+//Build Release candidates with -Werror regardless of compiler
+// issues.
+BENCHMARK_FORCE_WERROR:BOOL=OFF
+
+//Enable installation of documentation.
+BENCHMARK_INSTALL_DOCS:BOOL=ON
+
+//Use bundled GoogleTest. If disabled, the find_package(GTest)
+// will be used.
+BENCHMARK_USE_BUNDLED_GTEST:BOOL=ON
+
+//Build and test using libc++ as the standard library.
+BENCHMARK_USE_LIBCXX:BOOL=OFF
+
 //Path to a program.
 CMAKE_ADDR2LINE:FILEPATH=C:/msys64/mingw64/bin/addr2line.exe
 
@@ -113,7 +161,7 @@ CMAKE_FIND_PACKAGE_REDIRECTS_DIR:STATIC=C:/Users/omarc/CLionProjects/QuadKDBench
 CMAKE_GNUtoMS:BOOL=OFF
 
 //Install path prefix, prepended onto install directories.
-CMAKE_INSTALL_PREFIX:PATH=C:/Program Files (x86)/untitled
+CMAKE_INSTALL_PREFIX:PATH=C:/Program Files (x86)/QuadKDBench
 
 //Path to a program.
 CMAKE_LINKER:FILEPATH=C:/msys64/mingw64/bin/ld.exe
@@ -158,6 +206,21 @@ CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
 CMAKE_PROJECT_NAME:STATIC=QuadKDBench
+
+//Value Computed by CMake
+CMAKE_PROJECT_VERSION:STATIC=1.8.3
+
+//Value Computed by CMake
+CMAKE_PROJECT_VERSION_MAJOR:STATIC=1
+
+//Value Computed by CMake
+CMAKE_PROJECT_VERSION_MINOR:STATIC=8
+
+//Value Computed by CMake
+CMAKE_PROJECT_VERSION_PATCH:STATIC=3
+
+//Value Computed by CMake
+CMAKE_PROJECT_VERSION_TWEAK:STATIC=
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=C:/msys64/mingw64/bin/ranlib.exe
@@ -252,13 +315,13 @@ QuadKDBench_IS_TOP_LEVEL:STATIC=ON
 QuadKDBench_SOURCE_DIR:STATIC=C:/Users/omarc/CLionProjects/QuadKDBench
 
 //Value Computed by CMake
-untitled_BINARY_DIR:STATIC=C:/Users/omarc/CLionProjects/QuadKDBench/cmake-build-debug
+benchmark_BINARY_DIR:STATIC=C:/Users/omarc/CLionProjects/QuadKDBench/cmake-build-debug/benchmark
 
 //Value Computed by CMake
-untitled_IS_TOP_LEVEL:STATIC=ON
+benchmark_IS_TOP_LEVEL:STATIC=OFF
 
 //Value Computed by CMake
-untitled_SOURCE_DIR:STATIC=C:/Users/omarc/CLionProjects/QuadKDBench
+benchmark_SOURCE_DIR:STATIC=C:/Users/omarc/CLionProjects/QuadKDBench/benchmark
 
 
 ########################

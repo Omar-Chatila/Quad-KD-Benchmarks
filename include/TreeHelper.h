@@ -58,4 +58,14 @@ inline MyKDTree buildMyKDFromFile(int pointNumber) {
     return myKdTree;
 }
 
+inline list<Point> getQueryNaive(vector<Point> &points, Area &queryArea) {
+    list<Point> result;
+    for (auto point: points) {
+        if (containsPoint(queryArea, point)) {
+            result.push_back(point);
+        }
+    }
+    return result;
+}
+
 

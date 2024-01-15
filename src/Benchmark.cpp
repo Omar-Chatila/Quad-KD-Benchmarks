@@ -44,8 +44,8 @@ static void buildKDETree(benchmark::State &state) {
 static void queryKDETree(benchmark::State &state) {
 
     KDTreeEfficient kdTreeEfficient = buildEKDTreeFromFile(state.range(0));
-    Area bigArea{234, 7000, 2000, 9000};
-
+    //Area bigArea{2000, 2200, 3000, 3100};
+    Area bigArea{2000, 2200, 3000, 3100};
     for (auto _: state) {
         benchmark::DoNotOptimize(kdTreeEfficient);
         kdTreeEfficient.query(bigArea);
@@ -83,8 +83,8 @@ static void buildQuadTree(benchmark::State &state) {
 static void queryQuadTree(benchmark::State &state) {
 
     QuadTree quadTree = buildQuadTreeFromFile(state.range(0));
-    Area bigArea{234, 7000, 2000, 9000};
-
+    //Area bigArea{234, 7000, 2000, 9000};
+    Area bigArea{2000, 2200, 3000, 3100};
     for (auto _: state) {
         benchmark::DoNotOptimize(quadTree);
         quadTree.query(bigArea);
@@ -122,14 +122,23 @@ static void buildMyKDTree(benchmark::State &state) {
 static void queryMYKDTree(benchmark::State &state) {
 
     MyKDTree myKdTree = buildMyKDFromFile(state.range(0));
-    Area bigArea{234, 7000, 2000, 9000};
-
+    // Area bigArea{234, 7000, 2000, 9000};
+    Area bigArea{2000, 2200, 3000, 3100};
     for (auto _: state) {
         benchmark::DoNotOptimize(myKdTree);
         myKdTree.query(bigArea);
     }
 
     state.SetComplexityN(state.range(0));
+}
+
+static void queryNaive(benchmark::State &state) {
+    vector<Point> points = getRandomPoints(state.range(0));
+    //Area bigArea{234, 7000, 2000, 9000};
+    Area bigArea{2000, 2200, 3000, 3100};
+    for (auto _: state) {
+        benchmark::DoNotOptimize(getQueryNaive(points, bigArea));
+    }
 }
 
 #define TEST(func) BENCHMARK(algo1)->Name("func")->DenseRange(START, END, STEPS);
@@ -151,6 +160,9 @@ BENCHMARK(queryQuadTree)->Name("Query Quadtree - Variable PointCount")->RangeMul
         ->Complexity(benchmark::oN)->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
 
 BENCHMARK(queryMYKDTree)->Name("Query MyKDTree - Variable PointCount")->RangeMultiplier(2)->Range(START, END)
+        ->Complexity(benchmark::oN)->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
+
+BENCHMARK(queryNaive)->Name("Query Naive - Variable PointCount")->RangeMultiplier(2)->Range(START, END)
         ->Complexity(benchmark::oN)->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
 
 BENCHMARK_MAIN();
