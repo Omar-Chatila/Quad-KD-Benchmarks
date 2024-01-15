@@ -10,6 +10,7 @@
 #include "KDTreeEfficient.h"
 #include "QuadTree.h"
 #include "Util.h"
+#include "MyKDTree.h"
 
 using namespace std;
 
@@ -47,6 +48,14 @@ inline list<Point> testQuery(KDTreeEfficient &kdTreeEfficient) {
     clock_gettime(CLOCK_MONOTONIC, &now);
     printf("Elapsed: %lf seconds\n", (now.tv_sec - start.tv_sec) + 1e-9 * (now.tv_nsec - start.tv_nsec));
     return result;
+}
+
+inline MyKDTree buildMyKDFromFile(int pointNumber) {
+    vector<Point> points = getRandomPoints(pointNumber);
+    Area area{0, 10000, 0, 10000};
+    MyKDTree myKdTree(points, area, 0);
+    myKdTree.buildTree();
+    return myKdTree;
 }
 
 

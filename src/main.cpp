@@ -106,9 +106,7 @@ static void testQT_Query() {
     writeStringToFile(result, outputPath);
 }
 
-int main() {
-    FAST_IO();
-
+static void testMyKDTree() {
     vector<Point> points = getRandomPoints(100000);
     cout << points.size() << "\n";
     Area area{0, 10000, 0, 10000};
@@ -131,10 +129,23 @@ int main() {
     list<Point> queried = myKdTree.query(queryArea);
     cout << "queried: " << "\n";
     int queriedNo = 0;
+    std:
+    ostringstream oss;
     for (auto point: queried) {
+        oss << point << "\n";
         queriedNo++;
     }
     cout << "Actual " << actual << ". queried " << queriedNo << endl;
+
+    string queryResult = oss.str();
+    string outputPath = R"(C:\Users\omarc\CLionProjects\QuadKDBench\myKDQueryOutput.txt)";
+    writeStringToFile(queryResult, outputPath);
+}
+
+int main() {
+    FAST_IO();
+
+    testMyKDTree();
 
     return 0;
 }

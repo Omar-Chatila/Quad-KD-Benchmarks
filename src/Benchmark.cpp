@@ -9,8 +9,9 @@
 
 #include <benchmark/benchmark.h>
 
-#define START 1000
+#define START 512
 #define END 100000
+#define ITERATIONS 200
 
 using namespace std;
 
@@ -92,16 +93,64 @@ static void queryQuadTree(benchmark::State &state) {
     state.SetComplexityN(state.range(0));
 }
 
+static void buildMyKDTree(benchmark::State &state) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<double> dis(0, 100000);
+
+    int pointNumber = state.range(0);
+    vector<Point> points;
+
+    for (int i = 0; i < pointNumber; i++) {
+        double x = dis(gen);
+        double y = dis(gen);
+        Point newPoint(x, y);
+        points.push_back(newPoint);
+    }
+
+    Area area{0, 100000, 0, 100000};
+
+    for (auto _: state) {
+        MyKDTree myKdTree(points, area, 0);
+        benchmark::DoNotOptimize(myKdTree);
+        myKdTree.buildTree();
+    }
+
+    state.SetComplexityN(state.range(0));
+}
+
+static void queryMYKDTree(benchmark::State &state) {
+
+    MyKDTree myKdTree = buildMyKDFromFile(state.range(0));
+    Area bigArea{234, 7000, 2000, 9000};
+
+    for (auto _: state) {
+        benchmark::DoNotOptimize(myKdTree);
+        myKdTree.query(bigArea);
+    }
+
+    state.SetComplexityN(state.range(0));
+}
+
 #define TEST(func) BENCHMARK(algo1)->Name("func")->DenseRange(START, END, STEPS);
 
-BENCHMARK(buildKDETree)->Name("Build KD-Tree-Efficient")->RangeMultiplier(2)->Range(1000, END)
-        ->Complexity(benchmark::oN)->Unit(benchmark::kMillisecond)->Iterations(200);
-BENCHMARK(queryKDETree)->Name("Query KD-E - Variable PointCount")->RangeMultiplier(2)->Range(1000, END)
-        ->Complexity(benchmark::oN)->Unit(benchmark::kMillisecond)->Iterations(200);
+BENCHMARK(buildKDETree)->Name("Build KD-Tree-Efficient")->RangeMultiplier(2)->Range(START, END)
+        ->Complexity(benchmark::oN)->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
 
-BENCHMARK(buildQuadTree)->Name("Build Quadtree")->RangeMultiplier(2)->Range(1000, END)->Complexity(
-        benchmark::oN)->Unit(benchmark::kMillisecond)->Iterations(200);
-BENCHMARK(queryQuadTree)->Name("Query Quadtree - Variable PointCount")->RangeMultiplier(2)->Range(1000, END)
-        ->Complexity(benchmark::oN)->Unit(benchmark::kMillisecond)->Iterations(200);
+BENCHMARK(buildQuadTree)->Name("Build Quadtree")->RangeMultiplier(2)->Range(START, END)->Complexity(
+        benchmark::oN)->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
+
+BENCHMARK(buildMyKDTree)->Name("Build MyKDTree")->RangeMultiplier(2)->Range(START, END)->Complexity(
+        benchmark::oN)->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
+
+
+BENCHMARK(queryKDETree)->Name("Query KD-E - Variable PointCount")->RangeMultiplier(2)->Range(START, END)
+        ->Complexity(benchmark::oN)->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
+
+BENCHMARK(queryQuadTree)->Name("Query Quadtree - Variable PointCount")->RangeMultiplier(2)->Range(START, END)
+        ->Complexity(benchmark::oN)->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
+
+BENCHMARK(queryMYKDTree)->Name("Query MyKDTree - Variable PointCount")->RangeMultiplier(2)->Range(START, END)
+        ->Complexity(benchmark::oN)->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
 
 BENCHMARK_MAIN();
