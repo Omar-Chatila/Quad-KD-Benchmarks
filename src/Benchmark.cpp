@@ -6,6 +6,7 @@
 #include "../include/TreeHelper.h"
 #include "../include/QuadTree.h"
 #include "../include/Util.h"
+
 #include <benchmark/benchmark.h>
 
 #define START 512
@@ -20,19 +21,20 @@ static void buildKDETree(benchmark::State &state) {
     std::uniform_real_distribution<double> dis(0, 100000);
 
     int pointNumber = state.range(0);
-    Point pointArray[pointNumber];
+    auto *points = (Point *) malloc(pointNumber * sizeof(Point));
+
 
     for (int i = 0; i < pointNumber; i++) {
         double x = dis(gen);
         double y = dis(gen);
         Point newPoint(x, y);
-        pointArray[i] = newPoint;
+        points[i] = newPoint;
     }
 
     Area area{0, 100000, 0, 100000};
 
     for (auto _: state) {
-        KDTreeEfficient kdTreeEfficient(pointArray, 0, area, 0, pointNumber - 1);
+        KDTreeEfficient kdTreeEfficient(points, 0, area, 0, pointNumber - 1);
         benchmark::DoNotOptimize(kdTreeEfficient);
         kdTreeEfficient.buildTree();
     }
@@ -93,20 +95,7 @@ static void queryQuadTree(benchmark::State &state) {
 }
 
 static void buildMyKDTree(benchmark::State &state) {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<double> dis(0, 100000);
-
-    int pointNumber = state.range(0);
-    vector<Point> points;
-
-    for (int i = 0; i < pointNumber; i++) {
-        double x = dis(gen);
-        double y = dis(gen);
-        Point newPoint(x, y);
-        points.push_back(newPoint);
-    }
-
+    vector<Point> points = getRandomPoints(state.range(0));
     Area area{0, 100000, 0, 100000};
 
     for (auto _: state) {
@@ -140,12 +129,12 @@ static void queryNaive(benchmark::State &state) {
     }
 }
 
-static void quadTree_contains(benchmark::State & state) {
+static void quadTree_contains(benchmark::State &state) {
     QuadTree quadTree = buildQuadTreeFromFile(state.range(0));
     std::vector<Point> points = getRandomPoints(state.range(0));
     std::vector<Point> searchPoints;
     int step = state.range(0) / 100;
-    for (int i = 0; i < state.range(0);i+=step) {
+    for (int i = 0; i < state.range(0); i += step) {
         searchPoints.push_back(points.at(i));
     }
 
@@ -159,7 +148,7 @@ static void kDTreeEfficient_Contains(benchmark::State &state) {
     std::vector<Point> points = getRandomPoints(state.range(0));
     std::vector<Point> searchPoints;
     int step = state.range(0) / 100;
-    for (int i = 0; i < state.range(0);i+=step) {
+    for (int i = 0; i < state.range(0); i += step) {
         searchPoints.push_back(points.at(i));
     }
 

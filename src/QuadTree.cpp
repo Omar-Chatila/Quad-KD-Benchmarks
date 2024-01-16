@@ -57,6 +57,7 @@ void QuadTree::partition() {
     for (int i = 0; i < 4; i++) {
         children[i] = new QuadTree(quadrants[i], childrenElements[i]);
     }
+    free(quadrants);
 }
 
 std::list<Point> QuadTree::query(Area queryRectangle) {
@@ -81,7 +82,7 @@ std::list<Point> QuadTree::query(Area queryRectangle) {
 }
 
 bool QuadTree::isPointLeaf() {
-    return this->elements.size() == 1;
+    return this->elements.size() <= 1;
 }
 
 bool QuadTree::contains(Point &point) {
@@ -114,18 +115,18 @@ bool QuadTree::isEmpty() {
 
 void QuadTree::add(Point point) {
     QuadTree *current = this;
-    if (!current->isEmpty()) {
-        double pointX = point.x;
-        double pointY = point.y;
-        while (!current->isNodeLeaf()) {
-            current = locateQuadrant(pointX, pointY, current);
-        }
+    if (current->isEmpty()) {
         current->elements.push_back(point);
-        if (current->isPointLeaf()) {
-            current->buildTree();
-        }
-    } else {
-        current->elements.push_back(point);
+        return;
+    }
+
+    while (!current->isNodeLeaf()) {
+        current = locateQuadrant(point.x, point.y, current);
+    }
+    current->elements.push_back(point);
+
+    if (!current->isPointLeaf()) {
+        current->buildTree();
     }
 }
 

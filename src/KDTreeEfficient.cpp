@@ -40,7 +40,7 @@ void KDTreeEfficient::buildTree() {
 }
 
 void KDTreeEfficient::buildTree(int level) {
-    if ((this->to - this->from) > 0) {
+    if (this->to - this->from > 0) {
         if (level % 2 == 0) {
             // vertical split
             this->setVerticalChildren(level);
