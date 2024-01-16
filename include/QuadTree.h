@@ -41,7 +41,7 @@ public:
 
     list<Point> query(Area queryRectangle);
 
-    bool contains(Point point);
+    bool contains(Point &point);
 
     bool isEmpty();
 

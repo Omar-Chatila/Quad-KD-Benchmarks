@@ -6,7 +6,6 @@
 #include "../include/TreeHelper.h"
 #include "../include/QuadTree.h"
 #include "../include/Util.h"
-
 #include <benchmark/benchmark.h>
 
 #define START 512
@@ -141,6 +140,48 @@ static void queryNaive(benchmark::State &state) {
     }
 }
 
+static void quadTree_contains(benchmark::State & state) {
+    QuadTree quadTree = buildQuadTreeFromFile(state.range(0));
+    std::vector<Point> points = getRandomPoints(state.range(0));
+    std::vector<Point> searchPoints;
+    int step = state.range(0) / 100;
+    for (int i = 0; i < state.range(0);i+=step) {
+        searchPoints.push_back(points.at(i));
+    }
+
+    for (auto _: state) {
+        benchmark::DoNotOptimize(qtContainsPoint(quadTree, searchPoints));
+    }
+}
+
+static void kDTreeEfficient_Contains(benchmark::State &state) {
+    KDTreeEfficient tree = buildEKDTreeFromFile(state.range(0));
+    std::vector<Point> points = getRandomPoints(state.range(0));
+    std::vector<Point> searchPoints;
+    int step = state.range(0) / 100;
+    for (int i = 0; i < state.range(0);i+=step) {
+        searchPoints.push_back(points.at(i));
+    }
+
+    for (auto _: state) {
+        benchmark::DoNotOptimize(kdEContainsPoint(tree, searchPoints));
+    }
+}
+
+static void myKDTree_Contains(benchmark::State &state) {
+    MyKDTree tree = buildMyKDFromFile(state.range(0));
+    std::vector<Point> points = getRandomPoints(state.range(0));
+    std::vector<Point> searchPoints;
+    int step = state.range(0) / 100;
+    for (int i = 0; i < state.range(0); i += step) {
+        searchPoints.push_back(points.at(i));
+    }
+
+    for (auto _: state) {
+        benchmark::DoNotOptimize(myKdContainsPoint(tree, searchPoints));
+    }
+}
+
 #define TEST(func) BENCHMARK(algo1)->Name("func")->DenseRange(START, END, STEPS);
 
 BENCHMARK(buildKDETree)->Name("Build KD-Tree-Efficient")->RangeMultiplier(2)->Range(START, END)
@@ -164,5 +205,17 @@ BENCHMARK(queryMYKDTree)->Name("Query MyKDTree - Variable PointCount")->RangeMul
 
 BENCHMARK(queryNaive)->Name("Query Naive - Variable PointCount")->RangeMultiplier(2)->Range(START, END)
         ->Complexity(benchmark::oN)->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
+
+// CONTAINS
+
+BENCHMARK(quadTree_contains)->Name("Quadtree - Contains")->RangeMultiplier(2)->Range(START, END)
+        ->Complexity(benchmark::oN)->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
+
+BENCHMARK(kDTreeEfficient_Contains)->Name("KD_Tree_Efficient - Contains")->RangeMultiplier(2)->Range(START, END)
+        ->Complexity(benchmark::oN)->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
+
+BENCHMARK(myKDTree_Contains)->Name("MyKDTree - Contains")->RangeMultiplier(2)->Range(START, END)
+        ->Complexity(benchmark::oN)->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
+
 
 BENCHMARK_MAIN();

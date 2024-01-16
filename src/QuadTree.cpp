@@ -84,7 +84,7 @@ bool QuadTree::isPointLeaf() {
     return this->elements.size() == 1;
 }
 
-bool QuadTree::contains(Point point) {
+bool QuadTree::contains(Point &point) {
     QuadTree *current = this;
     while (!current->isNodeLeaf()) {
         current = locateQuadrant(point.x, point.y, current);

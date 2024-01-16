@@ -68,4 +68,22 @@ inline list<Point> getQueryNaive(vector<Point> &points, Area &queryArea) {
     return result;
 }
 
+inline void qtContainsPoint(QuadTree &quadtree, vector<Point> &points) {
+    for (auto point : points) {
+        quadtree.contains(point);
+    }
+}
+
+inline void kdEContainsPoint(KDTreeEfficient &kdTreeEfficient, vector<Point> &points) {
+    for (auto point : points) {
+        kdTreeEfficient.contains(point);
+    }
+}
+
+inline void myKdContainsPoint(MyKDTree &tree, vector<Point> &points) {
+    for (auto point : points) {
+        tree.contains(point);
+    }
+}
+
 

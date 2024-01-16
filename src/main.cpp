@@ -145,7 +145,15 @@ static void testMyKDTree() {
 int main() {
     FAST_IO();
 
-    testMyKDTree();
+    QuadTree quadTree = buildQuadTreeFromFile(100000);
+    std::vector<Point> points = getRandomPoints(100000);
+    std::vector<Point> searchPoints;
+    int index = 0;
+    for (int i = 0; i < 100; i++) {
+        searchPoints.push_back(points.at(index));
+        index += 999;
+    }
+    qtContainsPoint(quadTree, searchPoints);
 
     return 0;
 }
