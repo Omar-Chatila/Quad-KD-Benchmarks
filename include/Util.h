@@ -9,8 +9,6 @@
 #include "iostream"
 #include <fstream>
 #include <sstream>
-#include <random>
-#include "algorithm"
 
 
 using namespace std;
@@ -43,6 +41,10 @@ struct Area {
     double xMin, xMax, yMin, yMax;
 };
 
+struct SplitLine {
+    double fromX, fromY, toX, toY;
+};
+
 inline Area *splitArea(Area area, double xMid, double yMid) {
     Area *areas = (Area *) std::malloc(sizeof(Area) << 2);
     areas[NORTH_EAST] = Area(xMid, area.xMax, yMid, area.yMax);
@@ -64,33 +66,22 @@ inline bool containsPoint(Area &area, Point &point) {
     return (point.x >= area.xMin && point.y >= area.yMin && point.x <= area.xMax && point.y <= area.yMax);
 }
 
-inline int getRandom(int low, int high) {
-    return rand() % (high - low) + low;
+inline void swap(Point *points, int first, int second) {
+    Point temp = points[first];
+    points[first] = points[second];
+    points[second] = temp;
 }
-
-inline double medianOfThree(double a, double b, double c) {
-    return max(min(a, b), min(max(a, b), c));
-}
-
 
 inline int partition(Point *points, int left, int right, bool x) {
-    int randIndex1 = getRandom(left, right);
-    int randIndex2 = getRandom(left, right);
-    int randIndex3 = getRandom(left, right);
-
-    // Find the median of three values at the randomly selected indices
-    double pivot = medianOfThree(x ? points[randIndex1].x : points[randIndex1].y,
-                                 x ? points[randIndex2].x : points[randIndex2].y,
-                                 x ? points[randIndex3].x : points[randIndex3].y);
-
+    double pivot = x ? points[left].x : points[left].y;
     int position = left;
     for (int i = left + 1; i <= right; i++) {
         if ((x ? points[i].x : points[i].y) <= pivot) {
             position++;
-            swap(points[i], points[position]);
+            swap(points, i, position);
         }
     }
-    swap(points[left], points[position]);
+    swap(points, left, position);
     return position;
 }
 
@@ -108,41 +99,9 @@ inline double quickSelect(Point *points, int pos, int left, int right, bool x) {
     }
 }
 
-// Implementation of QuickSelect
-inline double kthSmallest(Point *a, int left, int right, int k, bool x) {
-
-    while (left <= right) {
-
-        // Partition a[left..right] around a pivot
-        // and find the position of the pivot
-        int pivotIndex = partition(a, left, right, x);
-
-        // If pivot itself is the k-th smallest element
-        if (pivotIndex == k - 1)
-            return x ? a[pivotIndex].x : a[pivotIndex].y;
-
-            // If there are more than k-1 elements on
-            // left of pivot, then k-th smallest must be
-            // on left side.
-        else if (pivotIndex > k - 1)
-            right = pivotIndex - 1;
-
-            // Else k-th smallest is on right side.
-        else
-            left = pivotIndex + 1;
-    }
-    return -1;
-}
-
 inline double median(Point *points, bool x, int left, int right) {
-    int size = right - left;
-    int pos = left + size / 2;
-
-    std::nth_element(points + left, points + pos, points + right, [&x](const Point &a, const Point &b) {
-        return x ? a.x < b.x : a.y < b.y;
-    });
-
-    return x ? points[pos].x : points[pos].y;
+    int pos = (left + right) / 2;
+    return quickSelect(points, pos, left, right, x);
 }
 
 
@@ -174,16 +133,28 @@ inline double getMedian(vector<Point> &list, bool x) {
 }
 
 inline vector<Point> getRandomPoints(int pointNumber) {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<double> dis(0, pointNumber);
-
-    vector<Point> points;
-    for (int i = 0; i < pointNumber; i++) {
-        double x = dis(gen);
-        double y = dis(gen);
-        points.push_back(Point{x, y});
+    std::ifstream inputFile(R"(C:\Users\omarc\CLionProjects\QuadKDBench\random_points.txt)");
+    if (!inputFile.is_open()) {
+        std::cerr << "Error opening file\n";
     }
+
+    std::vector<Point> points;
+    std::string line;
+
+    while (std::getline(inputFile, line) && pointNumber > 0) {
+        std::istringstream iss(line);
+        std::string token;
+
+        getline(iss, token, ',');
+        double x = std::stod(token);
+
+        getline(iss, token, ',');
+        double y = std::stod(token);
+
+        points.emplace_back(x, y);
+        pointNumber--;
+    }
+    inputFile.close();
 
     return points;
 }

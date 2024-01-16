@@ -16,8 +16,7 @@ using namespace std;
 
 inline KDTreeEfficient buildEKDTreeFromFile(int pointNumber) {
     int size = pointNumber - 1;
-    auto *pointArray = (Point *) malloc(pointNumber * sizeof(Point));
-
+    Point pointArray[pointNumber];
     std::vector<Point> points = getRandomPoints(pointNumber);
 
     int i = 0;
@@ -70,19 +69,19 @@ inline list<Point> getQueryNaive(vector<Point> &points, Area &queryArea) {
 }
 
 inline void qtContainsPoint(QuadTree &quadtree, vector<Point> &points) {
-    for (auto point: points) {
+    for (auto point : points) {
         quadtree.contains(point);
     }
 }
 
 inline void kdEContainsPoint(KDTreeEfficient &kdTreeEfficient, vector<Point> &points) {
-    for (auto point: points) {
+    for (auto point : points) {
         kdTreeEfficient.contains(point);
     }
 }
 
 inline void myKdContainsPoint(MyKDTree &tree, vector<Point> &points) {
-    for (auto point: points) {
+    for (auto point : points) {
         tree.contains(point);
     }
 }
