@@ -82,7 +82,7 @@ std::list<Point> QuadTree::query(Area queryRectangle) {
 }
 
 bool QuadTree::isPointLeaf() {
-    return this->elements.size() <= 1;
+    return this->elements.size() == 1;
 }
 
 bool QuadTree::contains(Point &point) {
@@ -90,8 +90,7 @@ bool QuadTree::contains(Point &point) {
     while (!current->isNodeLeaf()) {
         current = locateQuadrant(point.x, point.y, current);
     }
-    auto it = find(current->elements.begin(), current->elements.end(), point);
-    return it != current->elements.end();
+    return !current->elements.empty() && current->elements[0] == point;
 }
 
 QuadTree *QuadTree::locateQuadrant(double pointX, double pointY, QuadTree *current) {
@@ -113,7 +112,7 @@ bool QuadTree::isEmpty() {
     return this->elements.empty();
 }
 
-void QuadTree::add(Point point) {
+void QuadTree::add(Point &point) {
     QuadTree *current = this;
     if (current->isEmpty()) {
         current->elements.push_back(point);
@@ -125,8 +124,8 @@ void QuadTree::add(Point point) {
     }
     current->elements.push_back(point);
 
-    if (!current->isPointLeaf()) {
-        current->buildTree();
+    if (current->elements.size() > 1) {
+        current->partition();
     }
 }
 

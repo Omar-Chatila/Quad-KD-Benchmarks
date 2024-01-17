@@ -28,9 +28,7 @@ struct Point {
     }
 
     bool operator==(const Point &other) const {
-        double epsilon = 1e-6;
-        return std::abs(x - other.x) < epsilon &&
-               std::abs(y - other.y) < epsilon;
+        return x == other.x && y == other.y;
     }
 };
 
@@ -179,11 +177,18 @@ inline vector<Point> getRandomPoints(int pointNumber) {
     std::uniform_real_distribution<double> dis(0, pointNumber);
 
     vector<Point> points;
+    points.reserve(pointNumber);
     for (int i = 0; i < pointNumber; i++) {
         double x = dis(gen);
         double y = dis(gen);
         points.push_back(Point{x, y});
     }
-
     return points;
+}
+
+inline Point getRandomPoint(int bounds) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<double> dis(0, bounds);
+    return {dis(gen), dis(gen)};
 }

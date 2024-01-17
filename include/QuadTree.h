@@ -22,7 +22,7 @@ class QuadTree {
 private:
     QuadTree *children[4]{};
     Area square{};
-    list<Point> elements;
+    vector<Point> elements;
 
     static QuadTree *locateQuadrant(double pointX, double pointY, QuadTree *current);
 
@@ -45,7 +45,7 @@ public:
 
     bool isEmpty();
 
-    void add(Point point);
+    void add(Point &point);
 
     QuadTree *getNorthEast();
 

@@ -4,7 +4,7 @@
 
 #include "../include/MyKDTree.h"
 
-MyKDTree::MyKDTree(vector<Point> &points, Area area, int level) {
+MyKDTree::MyKDTree(vector<Point> &points, Area &area, int level) {
     this->points = points;
     this->area = area;
     this->level = level;
@@ -40,17 +40,17 @@ void MyKDTree::buildTree() {
 void MyKDTree::setVerticalChildren(int lev) {
     std::vector<std::vector<Point>> splitVectors = splitVector(points);
     Area leftArea = Area(this->area.xMin, getMedian(points, true), this->area.yMin, this->area.yMax);
-    this->leftChild = new MyKDTree(splitVectors.at(0), leftArea, lev + 1);
+    this->leftChild = new MyKDTree(splitVectors[0], leftArea, lev + 1);
     Area rightArea = Area(getMedian(points, true), this->area.xMax, this->area.yMin, this->area.yMax);
-    this->rightChild = new MyKDTree(splitVectors.at(1), rightArea, lev + 1);
+    this->rightChild = new MyKDTree(splitVectors[1], rightArea, lev + 1);
 }
 
 void MyKDTree::setHorizontalChildren(int lev) {
     std::vector<std::vector<Point>> splitVectors = splitVector(points);
     Area lowerArea = Area(this->area.xMin, this->area.xMax, this->area.yMin, getMedian(points, false));
-    this->leftChild = new MyKDTree(splitVectors.at(0), lowerArea, lev + 1);
+    this->leftChild = new MyKDTree(splitVectors[0], lowerArea, lev + 1);
     Area higherArea = Area(this->area.xMin, this->area.xMax, getMedian(points, false), this->area.yMax);
-    this->rightChild = new MyKDTree(splitVectors.at(1), higherArea, lev + 1);
+    this->rightChild = new MyKDTree(splitVectors[1], higherArea, lev + 1);
 }
 
 bool MyKDTree::contains(Point point) {
@@ -68,8 +68,8 @@ bool MyKDTree::contains(Point point) {
 list<Point> MyKDTree::query(Area queryRectangle) {
     list<Point> result;
     if (this->isLeaf()) {
-        if (containsPoint(queryRectangle, this->points.at(0))) {
-            result.push_back(this->points.at(0));
+        if (containsPoint(queryRectangle, this->points[0])) {
+            result.push_back(this->points[0]);
         }
         return result;
     } else if (containsArea(queryRectangle, this->area)) {
@@ -137,17 +137,9 @@ void MyKDTree::add(Point point) {
     }
 }
 
-void MyKDTree::appendPoint(Point point, int level) {
+void MyKDTree::appendPoint(Point point, int lev) {
     points.push_back(point);
-    if (level % 2 == 0) {
-        sort(points.begin(), points.end(), [](const Point &a, const Point &b) {
-            return a.x < b.x;
-        });
-
-    } else {
-        sort(points.begin(), points.end(), [](const Point &a, const Point &b) {
-            return a.y < b.y;
-        });
-
+    if ((lev % 2 == 0 && points[0].x > point.x) || (lev % 2 != 0 && points[0].y > point.y)) {
+        swap(points[0], point);
     }
 }

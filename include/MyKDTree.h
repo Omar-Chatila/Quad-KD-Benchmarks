@@ -13,10 +13,10 @@ using namespace std;
 class MyKDTree {
 
 private:
-    Area area;
+    Area area{};
     int level;
     vector<Point> points;
-    MyKDTree *leftChild, *rightChild;
+    MyKDTree *leftChild{}, *rightChild{};
 
     void setVerticalChildren(int level);
 
@@ -26,7 +26,7 @@ private:
 
 public:
 
-    MyKDTree(vector<Point> &points, Area area, int level);
+    MyKDTree(vector<Point> &points, Area &area, int level);
 
     bool contains(Point p);
 

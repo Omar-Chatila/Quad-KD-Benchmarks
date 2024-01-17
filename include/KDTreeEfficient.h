@@ -38,6 +38,8 @@ private:
 public:
     KDTreeEfficient(Point *points, int level, Area &area, int from, int to);
 
+    ~KDTreeEfficient();
+
     bool contains(Point p);
 
     list<Point> query(Area queryArea);

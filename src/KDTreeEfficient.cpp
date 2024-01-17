@@ -18,6 +18,11 @@ KDTreeEfficient::KDTreeEfficient(Point *points, int level, Area &area, int from,
     }
 }
 
+KDTreeEfficient::~KDTreeEfficient() {
+    free(this->points);
+}
+
+
 void KDTreeEfficient::setVerticalChildren(int level) {
     int midIndex = (from + to) / 2;
     Area leftArea = Area(this->area.xMin, this->xMedian, this->area.yMin, this->area.yMax);
@@ -123,6 +128,8 @@ KDTreeEfficient *KDTreeEfficient::getRightChild() {
 Point *KDTreeEfficient::getPoints() {
     return this->points;
 }
+
+
 
 
 

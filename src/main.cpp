@@ -44,7 +44,7 @@ static void writeTreeToFile(KDTreeEfficient &kdTreeEfficient) {
 }
 
 static void testKDE_Query() {
-    KDTreeEfficient kdTreeEfficient = buildEKDTreeFromFile(100000);
+    KDTreeEfficient kdTreeEfficient = buildEKD_Random(100000);
     list<Point> queryResult = testQuery(kdTreeEfficient);
 
     std::string outputPath = R"(C:\Users\omarc\CLionProjects\QuadKDBench\queryOutput.txt)";
@@ -144,45 +144,21 @@ static void testMyKDTree() {
 int main() {
     FAST_IO();
 
-    //testMyKDTree();
-
-    int size2 = 10'000'000;
-    int dim = 1000000;
-
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<double> dis(0, 1000000);
-
-    Area area{0, static_cast<double>(dim + 1), 0, static_cast<double>(dim + 1)};
-    vector<Point> pointVector;
-    QuadTree quadTree(area, pointVector);
-    Point *points = (Point *) malloc(size2 * sizeof(Point));
-
-    struct timespec start, now;
-    clock_gettime(CLOCK_MONOTONIC, &start);
-    for (int i = 0; i < size2; ++i) {
-        double x = dis(gen);
-        double y = dis(gen);
-        quadTree.add(Point{x, y});
-    }
-    clock_gettime(CLOCK_MONOTONIC, &now);
-    printf("Elapsed: %lf seconds\n", (now.tv_sec - start.tv_sec) + 1e-9 * (now.tv_nsec - start.tv_nsec));
-
-    cout << quadTree.getHeight() << "\n";
-
-
-    free(points);
-
-    Point *pointss = (Point *) malloc(100 * sizeof(Point));
-    for (int i = 0; i < 100; i++) {
-        pointss[i] = Point{i + 0.0, i + 0.0};
+    int size = 10000;
+    QuadTree quadTree = buildQuadTreeRandom(size);
+    std::vector<Point> points = getRandomPoints(size);
+    std::vector<Point> searchPoints;
+    searchPoints.reserve(size);
+    int step = size / 100;
+    for (int i = 0; i < size; i += step) {
+        searchPoints.push_back(points.at(i));
     }
 
-    int size = 100;
-    double medianV = median(pointss, true, 50, size);
+    quadTree.contains(points.at(0));
 
-    std::cout << "Median value: " << medianV << std::endl;
-    free(pointss);
+    qtContainsPoint(quadTree, searchPoints);
+
+
     return 0;
 }
 

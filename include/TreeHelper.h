@@ -14,7 +14,7 @@
 
 using namespace std;
 
-inline KDTreeEfficient buildEKDTreeFromFile(int pointNumber) {
+inline KDTreeEfficient buildEKD_Random(int pointNumber) {
     int size = pointNumber - 1;
     auto *pointArray = (Point *) malloc(pointNumber * sizeof(Point));
 
@@ -25,7 +25,9 @@ inline KDTreeEfficient buildEKDTreeFromFile(int pointNumber) {
         pointArray[i++] = point;
     }
 
-    Area area{0, 10000, 0, 10000};
+    double bounds = pointNumber;
+
+    Area area{0, bounds, 0, bounds};
     int start = 0;
     KDTreeEfficient kdTreeEfficient(pointArray, 0, area, start, size);
     kdTreeEfficient.buildTree();
@@ -33,9 +35,10 @@ inline KDTreeEfficient buildEKDTreeFromFile(int pointNumber) {
     return kdTreeEfficient;
 }
 
-inline QuadTree buildQuadTreeFromFile(int pointNumber) {
+inline QuadTree buildQuadTreeRandom(int pointNumber) {
     std::vector<Point> points = getRandomPoints(pointNumber);
-    Area area{0, 10000, 0, 10000};
+    double bounds = pointNumber;
+    Area area{0, bounds, 0, bounds};
     QuadTree quadTree(area, points);
     quadTree.buildTree();
     return quadTree;
@@ -51,9 +54,10 @@ inline list<Point> testQuery(KDTreeEfficient &kdTreeEfficient) {
     return result;
 }
 
-inline MyKDTree buildMyKDFromFile(int pointNumber) {
+inline MyKDTree buildMyKD_Random(int pointNumber) {
     vector<Point> points = getRandomPoints(pointNumber);
-    Area area{0, 10000, 0, 10000};
+    double bounds = pointNumber;
+    Area area{0, bounds, 0, bounds};
     MyKDTree myKdTree(points, area, 0);
     myKdTree.buildTree();
     return myKdTree;
@@ -67,6 +71,17 @@ inline list<Point> getQueryNaive(vector<Point> &points, Area &queryArea) {
         }
     }
     return result;
+}
+
+inline void containsNaive(vector<Point> &searchPoints, vector<Point> &points) {
+    list<Point> result;
+    for (auto searchPoint: searchPoints) {
+        for (auto point: points) {
+            if (point == searchPoint) {
+                break;
+            }
+        }
+    }
 }
 
 inline void qtContainsPoint(QuadTree &quadtree, vector<Point> &points) {
