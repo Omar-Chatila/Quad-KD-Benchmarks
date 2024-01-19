@@ -8,7 +8,7 @@
 #include "spacer.hpp"
 
 #define START 512
-#define END 2'097'152
+#define END 1'048'577
 #define ITERATIONS 100
 
 using namespace std;
@@ -20,8 +20,10 @@ static int64_t queryQuadTree(int pointNumber, spacer &spacer) {
     QuadTree quadTree = buildQuadTreeRandom(size);
     Area bigArea{0.3 * size, 0.5 * size, 0.54 * size, 0.64 * size};
     spacer.reset();
-    quadTree.query(bigArea);
-    return spacer.space_used() / 1024;
+    std::list result = quadTree.query(bigArea);
+    int64_t spaceUsed = spacer.space_used();
+    result.clear();
+    return spaceUsed;
 }
 
 
@@ -31,7 +33,10 @@ static int64_t queryKDETree(int pointNumber, spacer &spacer) {
     Area bigArea{0.3 * size, 0.5 * size, 0.54 * size, 0.64 * size};
     spacer.reset();
     kdTreeEfficient.query(bigArea);
-    return spacer.space_used() / 1024;
+    std::list result = kdTreeEfficient.query(bigArea);
+    int64_t spaceUsed = spacer.space_used();
+    result.clear();
+    return spaceUsed;
 }
 
 
@@ -41,7 +46,10 @@ static int64_t queryMYKDTree(int pointNumber, spacer &spacer) {
     Area bigArea{0.3 * size, 0.5 * size, 0.54 * size, 0.64 * size};
     spacer.reset();
     myKdTree.query(bigArea);
-    return spacer.space_used() / 1024;
+    std::list result = myKdTree.query(bigArea);
+    int64_t spaceUsed = spacer.space_used();
+    result.clear();
+    return spaceUsed;
 }
 
 
@@ -50,8 +58,10 @@ static int64_t queryNaive(int pointNumber, spacer &spacer) {
     vector<Point> points = getRandomPoints(pointNumber);
     Area bigArea{0.3 * size, 0.5 * size, 0.54 * size, 0.64 * size};
     spacer.reset();
-    getQueryNaive(points, bigArea);
-    return spacer.space_used() / 1024;
+    std::list result = getQueryNaive(points, bigArea);
+    int64_t spaceUsed = spacer.space_used();
+    result.clear();
+    return spaceUsed;
 }
 
 
@@ -110,7 +120,7 @@ static void startBuildBenchmarks() {
     util::spacer spacer{};
     vector<string> results;
 
-    cout << "start" << endl;
+    cout << "Buidl results in kBytes" << endl;
 
     for (int i = START; i < END; i *= 2) {
         vector<Point> pointVector = getRandomPoints(i);
@@ -168,7 +178,7 @@ static void startQueryBenchmarks() {
     util::spacer spacer{};
     vector<string> results;
 
-    cout << "start" << endl;
+    cout << "Query-Results in Bytes" << endl;
 
     for (int i = START; i < END; i *= 2) {
         int64_t space = queryQuadTree(i, spacer);
@@ -185,14 +195,19 @@ static void startQueryBenchmarks() {
         results.push_back("MKD-Query/" + to_string(i) + ": " + to_string(space));
     }
 
+    for (int i = START; i < END; i *= 2) {
+        int64_t space = queryNaive(i, spacer);
+        results.push_back("Naive-Query/" + to_string(i) + ": " + to_string(space));
+    }
+
     for (const auto &record: results) {
         cout << record << "\n";
     }
 }
 
 int main() {
-    startBuildBenchmarks();
     startQueryBenchmarks();
+    startBuildBenchmarks();
     return 0;
 }
 

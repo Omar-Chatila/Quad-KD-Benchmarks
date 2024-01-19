@@ -29,7 +29,7 @@
 #ifndef _MALLOC_COUNT_H_
 #define _MALLOC_COUNT_H_
 
-#include <cstdlib>
+#include <stdlib.h>
 
 #ifdef __cplusplus
 extern "C" { /* for inclusion from C++ */

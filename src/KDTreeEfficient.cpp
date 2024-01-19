@@ -25,8 +25,8 @@ KDTreeEfficient::~KDTreeEfficient() {
 
 void KDTreeEfficient::setVerticalChildren(int level) {
     int midIndex = (from + to) / 2;
-    Area leftArea = Area(this->area.xMin, this->xMedian, this->area.yMin, this->area.yMax);
-    Area rightArea = Area(this->xMedian, this->area.xMax, this->area.yMin, this->area.yMax);
+    Area leftArea = Area{this->area.xMin, this->xMedian, this->area.yMin, this->area.yMax};
+    Area rightArea = Area{this->xMedian, this->area.xMax, this->area.yMin, this->area.yMax};
 
     this->leftChild = new KDTreeEfficient(this->points, level + 1, leftArea, from, midIndex);
     this->rightChild = new KDTreeEfficient(this->points, level + 1, rightArea, midIndex + 1, to);
@@ -34,8 +34,8 @@ void KDTreeEfficient::setVerticalChildren(int level) {
 
 void KDTreeEfficient::setHorizontalChildren(int level) {
     int midIndex = (from + to) / 2;
-    Area lowerArea = Area(this->area.xMin, this->area.xMax, this->area.yMin, this->yMedian);
-    Area higherArea = Area(this->area.xMin, this->area.xMax, this->yMedian, this->area.yMax);
+    Area lowerArea = Area{this->area.xMin, this->area.xMax, this->area.yMin, this->yMedian};
+    Area higherArea = Area{this->area.xMin, this->area.xMax, this->yMedian, this->area.yMax};
     this->leftChild = new KDTreeEfficient(this->points, level + 1, lowerArea, from, midIndex);
     this->rightChild = new KDTreeEfficient(this->points, level + 1, higherArea, midIndex + 1, to);
 }

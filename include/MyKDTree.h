@@ -22,7 +22,7 @@ private:
 
     void setHorizontalChildren(int level);
 
-    void appendPoint(Point point, int level);
+    void appendPoint(Point &point, int level);
 
 public:
 
@@ -30,7 +30,7 @@ public:
 
     bool contains(Point p);
 
-    list<Point> query(Area queryArea);
+    list<Point> query(Area &queryArea);
 
     void buildTree();
 
@@ -42,7 +42,7 @@ public:
 
     bool isEmpty();
 
-    void add(Point point);
+    void add(Point &point);
 };
 
 

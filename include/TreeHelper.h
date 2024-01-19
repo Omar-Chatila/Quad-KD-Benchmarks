@@ -45,7 +45,7 @@ inline QuadTree buildQuadTreeRandom(int pointNumber) {
 }
 
 inline list<Point> testQuery(KDTreeEfficient &kdTreeEfficient) {
-    Area queryArea(234, 7000, 2000, 9000);
+    Area queryArea{234, 7000, 2000, 9000};
     struct timespec start{}, now{};
     clock_gettime(CLOCK_MONOTONIC, &start);
     list<Point> result = kdTreeEfficient.query(queryArea);
