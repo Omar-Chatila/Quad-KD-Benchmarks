@@ -6,7 +6,7 @@
 
 QuadTree::QuadTree(Area square, vector<Point> &elements) {
     this->square = square;
-    this->elements.insert(this->elements.end(), elements.begin(), elements.end());
+    this->elements = elements;
 }
 
 int QuadTree::getHeight() {
@@ -60,7 +60,7 @@ void QuadTree::partition() {
     free(quadrants);
 }
 
-std::list<Point> QuadTree::query(Area queryRectangle) {
+std::list<Point> QuadTree::query(Area &queryRectangle) {
     list<Point> result;
     if (this->isPointLeaf()) {
         if (containsPoint(queryRectangle, this->elements.front())) {

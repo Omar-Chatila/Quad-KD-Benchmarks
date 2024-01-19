@@ -6,8 +6,11 @@
 #include "../include/QuadTree.h"
 #include "../include/MyKDTree.h"
 #include "../include/Util.h"
+#include "spacer/spacer.hpp"
 
 #define FAST_IO() ios_base::sync_with_stdio(false); cin.tie(NULL)
+
+using namespace util;
 
 static string treeToString(KDTreeEfficient *node) {
     std::ostringstream oss;
@@ -145,18 +148,21 @@ int main() {
     FAST_IO();
 
     int size = 10000;
+    spacer spacer{};
     QuadTree quadTree = buildQuadTreeRandom(size);
-    std::vector<Point> points = getRandomPoints(size);
-    std::vector<Point> searchPoints;
-    searchPoints.reserve(size);
-    int step = size / 100;
-    for (int i = 0; i < size; i += step) {
-        searchPoints.push_back(points.at(i));
-    }
+    int64_t space_in_bytes = spacer.space_used();
+    spacer.reset();
+    cout << size << " points - Space QT: " << space_in_bytes << endl;
 
-    quadTree.contains(points.at(0));
-
-    qtContainsPoint(quadTree, searchPoints);
+    KDTreeEfficient kdTreeEfficient = buildEKD_Random(size);
+    int64_t space_in_bytes2 = spacer.space_used();
+    spacer.space_peak();
+    cout << size << " points - Space KDE: " << space_in_bytes2 << endl;
+    spacer.reset();
+    MyKDTree myKdTree = buildMyKD_Random(size);
+    int64_t space_in_bytes3 = spacer.space_used();
+    spacer.space_peak();
+    cout << size << " points - Space MKD: " << space_in_bytes3 << endl;
 
 
     return 0;

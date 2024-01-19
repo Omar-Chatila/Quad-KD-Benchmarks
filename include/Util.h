@@ -43,10 +43,10 @@ struct Area {
 
 inline Area *splitArea(Area area, double xMid, double yMid) {
     Area *areas = (Area *) std::malloc(sizeof(Area) << 2);
-    areas[NORTH_EAST] = Area(xMid, area.xMax, yMid, area.yMax);
-    areas[NORTH_WEST] = Area(area.xMin, xMid, yMid, area.yMax);
-    areas[SOUTH_WEST] = Area(area.xMin, xMid, area.yMin, yMid);
-    areas[SOUTH_EAST] = Area(xMid, area.xMax, area.yMin, yMid);
+    areas[NORTH_EAST] = Area{xMid, area.xMax, yMid, area.yMax};
+    areas[NORTH_WEST] = Area{area.xMin, xMid, yMid, area.yMax};
+    areas[SOUTH_WEST] = Area{area.xMin, xMid, area.yMin, yMid};
+    areas[SOUTH_EAST] = Area{xMid, area.xMax, area.yMin, yMid};
     return areas;
 }
 
@@ -182,6 +182,22 @@ inline vector<Point> getRandomPoints(int pointNumber) {
         double x = dis(gen);
         double y = dis(gen);
         points.push_back(Point{x, y});
+    }
+    return points;
+}
+
+inline Point *getRandomPointsArray(int pointNumber) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<double> dis(0, pointNumber);
+
+    auto *points = (Point *) malloc(pointNumber * sizeof(Point));
+
+    for (int i = 0; i < pointNumber; i++) {
+        double x = dis(gen);
+        double y = dis(gen);
+        Point newPoint{x, y};
+        points[i] = newPoint;
     }
     return points;
 }

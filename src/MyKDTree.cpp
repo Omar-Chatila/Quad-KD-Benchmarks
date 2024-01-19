@@ -65,7 +65,7 @@ bool MyKDTree::contains(Point point) {
     return std::find(current->points.begin(), current->points.end(), point) != current->points.end();
 }
 
-list<Point> MyKDTree::query(Area queryRectangle) {
+list<Point> MyKDTree::query(Area &queryRectangle) {
     list<Point> result;
     if (this->isLeaf()) {
         if (containsPoint(queryRectangle, this->points[0])) {
@@ -111,7 +111,7 @@ bool MyKDTree::isEmpty() {
     return this->points.empty();
 }
 
-void MyKDTree::add(Point point) {
+void MyKDTree::add(Point &point) {
     MyKDTree *current = this;
     int lev = 0;
     while (!current->isLeaf()) {
@@ -137,7 +137,7 @@ void MyKDTree::add(Point point) {
     }
 }
 
-void MyKDTree::appendPoint(Point point, int lev) {
+void MyKDTree::appendPoint(Point &point, int lev) {
     points.push_back(point);
     if ((lev % 2 == 0 && points[0].x > point.x) || (lev % 2 != 0 && points[0].y > point.y)) {
         swap(points[0], point);

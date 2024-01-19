@@ -39,7 +39,7 @@ public:
 
     void buildTree();
 
-    list<Point> query(Area queryRectangle);
+    list<Point> query(Area &queryRectangle);
 
     bool contains(Point &point);
 
