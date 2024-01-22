@@ -146,25 +146,35 @@ static void testMyKDTree() {
 
 int main() {
     FAST_IO();
+    int n = 100000;
+    double bounds = n;
+    int k = 20;
+    Area area{0, bounds, 0, bounds};
+    vector<Point> points = getRandomPoints(n);
+    QuadTree quadTree(area, points);
+    quadTree.buildTree();
+    Point p{300.0, 250.0};
 
-    int size = 10000;
-    spacer spacer{};
-    QuadTree quadTree = buildQuadTreeRandom(size);
-    int64_t space_in_bytes = spacer.space_used();
-    spacer.reset();
-    cout << size << " points - Space QT: " << space_in_bytes << endl;
+    auto start = std::chrono::high_resolution_clock::now();
+    vector<Point> nns = quadTree.kNearestNeighbors(p, k);
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration_us = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    std::cout << "Time taken by QuadTree: " << duration_us.count() << " us" << std::endl;
 
-    KDTreeEfficient kdTreeEfficient = buildEKD_Random(size);
-    int64_t space_in_bytes2 = spacer.space_used();
-    spacer.space_peak();
-    cout << size << " points - Space KDE: " << space_in_bytes2 << endl;
-    spacer.reset();
-    MyKDTree myKdTree = buildMyKD_Random(size);
-    int64_t space_in_bytes3 = spacer.space_used();
-    spacer.space_peak();
-    cout << size << " points - Space MKD: " << space_in_bytes3 << endl;
+    for (auto point: nns) {
+        cout << point << "\n";
+    }
+    cout << "Naive" << "\n";
 
+    auto startN = std::chrono::high_resolution_clock::now();
+    vector<Point> naiveResult = naive_kNNS(p, points, k);
+    auto stopN = std::chrono::high_resolution_clock::now();
+    auto duration_usN = std::chrono::duration_cast<std::chrono::microseconds>(stopN - startN);
+    std::cout << "Time taken by Naive: " << duration_usN.count() << " us" << std::endl;
 
+    for (auto point: naiveResult) {
+        cout << point << "\n";
+    }
     return 0;
 }
 
