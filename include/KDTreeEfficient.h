@@ -61,7 +61,7 @@ public:
 
     int getHeight();
 
-    bool isLeaf();
+    bool isLeaf() const;
 
     Point *getPoints();
 

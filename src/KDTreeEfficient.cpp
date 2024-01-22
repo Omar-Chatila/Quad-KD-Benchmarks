@@ -74,7 +74,7 @@ bool KDTreeEfficient::contains(Point point) {
     return current->points[current->from] == point;
 }
 
-bool KDTreeEfficient::isLeaf() {
+bool KDTreeEfficient::isLeaf() const {
     return this->from == this->to;
 }
 

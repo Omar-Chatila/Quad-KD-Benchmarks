@@ -8,7 +8,7 @@
 #include "spacer.hpp"
 
 #define START 512
-#define END 1'048'577
+#define END 2'097'153
 #define ITERATIONS 100
 
 using namespace std;
