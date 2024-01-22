@@ -205,9 +205,10 @@ static void startQueryBenchmarks() {
     }
 }
 
-int main() {
+/*int main() {
     startQueryBenchmarks();
     startBuildBenchmarks();
     return 0;
 }
+ */
 

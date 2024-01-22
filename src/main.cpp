@@ -146,9 +146,10 @@ static void testMyKDTree() {
 
 int main(int argc, char *argv[]) {
     FAST_IO();
-    int n = atoi(argv[1]);
+    //int n = atoi(argv[1]);
+    //int k = atoi(argv[2]);
+    int n = 1'000'000, k = 100;
     double bounds = n;
-    int k = atoi(argv[2]);
     cout << "Nearest-Neighbor-Search - k: " << to_string(k) << " n: " << to_string(n) << endl;
 
     Area area{0, bounds, 0, bounds};
@@ -161,13 +162,11 @@ int main(int argc, char *argv[]) {
     vector<Point> nns = quadTree.kNearestNeighbors(p, k);
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration_us = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    std::cout << "Time taken by QuadTree: " << duration_us.count() << " µs" << std::endl;
+    std::cout << "Time taken by QuadTree: " << duration_us.count() << " µs - size: " << nns.size() << std::endl;
 
     for (auto point: nns) {
-        cout << point << endl;
+        //cout << point << endl;
     }
-
-    cout << "Naive" << "\n";
 
     auto startN = std::chrono::high_resolution_clock::now();
     vector<Point> naiveResult = naive_kNNS(p, points, k);
@@ -176,7 +175,7 @@ int main(int argc, char *argv[]) {
     std::cout << "Time taken by Naive: " << duration_usN.count() << " µs" << std::endl;
 
     for (auto point: naiveResult) {
-        cout << point << endl;
+        //cout << point << endl;
     }
 
     Point *pointsArray = (Point *) (malloc(n * sizeof(Point)));
@@ -184,17 +183,17 @@ int main(int argc, char *argv[]) {
     for (auto point: points) {
         pointsArray[i++] = point;
     }
-    KDTreeEfficient kdTreeEfficient(pointsArray, 0, area, 0, n - 1);
+    KDTreeEfficient kdTreeEfficient(pointsArray, 0, area, 0, n);
     kdTreeEfficient.buildTree();
 
     auto start3 = std::chrono::high_resolution_clock::now();
     vector<Point> nns2 = kdTreeEfficient.kNearestNeighbors(p, k);
     auto stop3 = std::chrono::high_resolution_clock::now();
     auto duration_us3 = std::chrono::duration_cast<std::chrono::microseconds>(stop3 - start3);
-    std::cout << "Time taken by KD-Tree_Efficient: " << duration_us3.count() << " µs" << std::endl;
+    std::cout << "Time taken by KD-Tree_Efficient: " << duration_us3.count() << " µs - size: " << nns.size() << std::endl;
 
     for (auto point: nns2) {
-        cout << point << "\n";
+        //cout << point << "\n";
     }
 
     return 0;

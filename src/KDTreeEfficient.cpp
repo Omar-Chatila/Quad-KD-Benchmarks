@@ -157,7 +157,7 @@ void KDTreeEfficient::kNearestNeighborsHelper(KDTreeEfficient *node, int k,
         queue.pop();
 
         if (current->isLeaf()) {
-            result.push_back(current->points[from]);
+            result.push_back(current->points[current->from]);
         } else {
             kNearestNeighborsHelper(current, k, queue, result);
         }
