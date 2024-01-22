@@ -129,6 +129,41 @@ Point *KDTreeEfficient::getPoints() {
     return this->points;
 }
 
+vector<Point> KDTreeEfficient::kNearestNeighbors(Point &queryPoint, int k) {
+    vector<Point> result;
+    result.reserve(k);
+    CompareKDTree compareFunction(queryPoint);
+    std::priority_queue<KDTreeEfficient *, vector<KDTreeEfficient *>, CompareKDTree> queue(compareFunction);
+    kNearestNeighborsHelper(this, k, queue, result);
+    return result;
+}
+
+void KDTreeEfficient::kNearestNeighborsHelper(KDTreeEfficient *node, int k,
+                                              priority_queue<KDTreeEfficient *, std::vector<KDTreeEfficient *>, CompareKDTree> &queue,
+                                              vector<Point> &result) {
+    if (node == nullptr) {
+        return;
+    }
+
+    if (node->isLeaf()) {
+        queue.push(node);
+    } else {
+        queue.push(node->leftChild);
+        queue.push(node->rightChild);
+    }
+
+    while (!queue.empty() && result.size() < k) {
+        KDTreeEfficient *current = queue.top();
+        queue.pop();
+
+        if (current->isLeaf()) {
+            result.push_back(current->points[from]);
+        } else {
+            kNearestNeighborsHelper(current, k, queue, result);
+        }
+    }
+}
+
 
 
 

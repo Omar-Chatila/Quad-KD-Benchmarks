@@ -144,37 +144,59 @@ static void testMyKDTree() {
     writeStringToFile(queryResult, outputPath);
 }
 
-int main() {
+int main(int argc, char *argv[]) {
     FAST_IO();
-    int n = 100000;
+    int n = atoi(argv[1]);
     double bounds = n;
-    int k = 20;
+    int k = atoi(argv[2]);
+    cout << "Nearest-Neighbor-Search - k: " << to_string(k) << " n: " << to_string(n) << endl;
+
     Area area{0, bounds, 0, bounds};
     vector<Point> points = getRandomPoints(n);
     QuadTree quadTree(area, points);
     quadTree.buildTree();
-    Point p{300.0, 250.0};
+    Point p{0.3 * bounds, 0.8 * bounds};
 
     auto start = std::chrono::high_resolution_clock::now();
     vector<Point> nns = quadTree.kNearestNeighbors(p, k);
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration_us = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    std::cout << "Time taken by QuadTree: " << duration_us.count() << " us" << std::endl;
+    std::cout << "Time taken by QuadTree: " << duration_us.count() << " µs" << std::endl;
 
     for (auto point: nns) {
-        cout << point << "\n";
+        cout << point << endl;
     }
+
     cout << "Naive" << "\n";
 
     auto startN = std::chrono::high_resolution_clock::now();
     vector<Point> naiveResult = naive_kNNS(p, points, k);
     auto stopN = std::chrono::high_resolution_clock::now();
     auto duration_usN = std::chrono::duration_cast<std::chrono::microseconds>(stopN - startN);
-    std::cout << "Time taken by Naive: " << duration_usN.count() << " us" << std::endl;
+    std::cout << "Time taken by Naive: " << duration_usN.count() << " µs" << std::endl;
 
     for (auto point: naiveResult) {
+        cout << point << endl;
+    }
+
+    Point *pointsArray = (Point *) (malloc(n * sizeof(Point)));
+    int i = 0;
+    for (auto point: points) {
+        pointsArray[i++] = point;
+    }
+    KDTreeEfficient kdTreeEfficient(pointsArray, 0, area, 0, n - 1);
+    kdTreeEfficient.buildTree();
+
+    auto start3 = std::chrono::high_resolution_clock::now();
+    vector<Point> nns2 = kdTreeEfficient.kNearestNeighbors(p, k);
+    auto stop3 = std::chrono::high_resolution_clock::now();
+    auto duration_us3 = std::chrono::duration_cast<std::chrono::microseconds>(stop3 - start3);
+    std::cout << "Time taken by KD-Tree_Efficient: " << duration_us3.count() << " µs" << std::endl;
+
+    for (auto point: nns2) {
         cout << point << "\n";
     }
+
     return 0;
 }
 
