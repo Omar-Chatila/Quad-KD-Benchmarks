@@ -102,4 +102,11 @@ inline void myKdContainsPoint(MyKDTree &tree, vector<Point> &points) {
     }
 }
 
+inline vector<Point> naive_kNNS(Point &queryPoint, vector<Point> &points, int k) {
+    sort(points.begin(), points.end(), [queryPoint](const Point &lhs, const Point &rhs) {
+        return pointDistance(lhs, queryPoint) < pointDistance(rhs, queryPoint);
+    });
+    return {points.begin(), points.begin() + k};
+}
+
 

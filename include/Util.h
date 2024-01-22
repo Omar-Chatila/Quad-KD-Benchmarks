@@ -214,3 +214,7 @@ inline double sqDistanceFrom(const Area &area, const Point &point) {
     double dy = max(max(area.yMin - point.y, 0.0), point.y - area.yMax);
     return dx * dx + dy * dy;
 }
+
+inline double pointDistance(const Point &p1, const Point &p2) {
+    return (p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y);
+}
