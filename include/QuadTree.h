@@ -8,9 +8,17 @@
 #include "Util.h"
 #include <bits/stdc++.h>
 
-using namespace std;
-
 class QuadTree {
+
+    struct CompareQuadTree {
+        const Point &queryPoint;
+
+        explicit CompareQuadTree(const Point &p) : queryPoint(p) {}
+
+        bool operator()(QuadTree *a, QuadTree *b) const {
+            return sqDistanceFrom(a->square, queryPoint) > sqDistanceFrom(b->square, queryPoint);
+        }
+    };
 
     friend std::ostream &operator<<(std::ostream &os, const QuadTree &quadTree) {
         os << std::fixed << std::setprecision(1);
@@ -26,7 +34,12 @@ private:
 
     static QuadTree *locateQuadrant(double pointX, double pointY, QuadTree *current);
 
+    void kNearestNeighborsHelper(QuadTree *node, int k,
+                                 priority_queue<QuadTree *, std::vector<QuadTree *>, CompareQuadTree> &queue,
+                                 std::vector<Point> &result);
+
 public:
+
     QuadTree(Area square, vector<Point> &elements);
 
     bool isNodeLeaf();
@@ -55,6 +68,7 @@ public:
 
     QuadTree *getSouthEast();
 
+    vector<Point> kNearestNeighbors(Point &queryPoint, int k);
 };
 
 

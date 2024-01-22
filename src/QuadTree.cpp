@@ -3,6 +3,8 @@
 //
 
 #include "../include/QuadTree.h"
+#include "functional"
+#include <queue>
 
 QuadTree::QuadTree(Area square, vector<Point> &elements) {
     this->square = square;
@@ -144,6 +146,44 @@ QuadTree *QuadTree::getSouthWest() {
 QuadTree *QuadTree::getSouthEast() {
     return this->children[SOUTH_EAST];
 }
+
+void QuadTree::kNearestNeighborsHelper(QuadTree *node, int k,
+                                       std::priority_queue<QuadTree *, std::vector<QuadTree *>, CompareQuadTree> &queue,
+                                       std::vector<Point> &result) {
+    if (node == nullptr) {
+        return;
+    }
+
+    if (node->isPointLeaf()) {
+        queue.push(node);
+    } else {
+        for (auto child: node->children) {
+            if (child != nullptr)
+                queue.push(child);
+        }
+    }
+
+    while (!queue.empty() && result.size() < k) {
+        QuadTree *current = queue.top();
+        queue.pop();
+
+        if (current->isPointLeaf()) {
+            result.push_back(current->elements[0]);
+        } else {
+            kNearestNeighborsHelper(current, k, queue, result);
+        }
+    }
+}
+
+std::vector<Point> QuadTree::kNearestNeighbors(Point &queryPoint, int k) {
+    vector<Point> result;
+    result.reserve(k);
+    CompareQuadTree compareFunction(queryPoint);
+    std::priority_queue<QuadTree *, vector<QuadTree *>, CompareQuadTree> queue(compareFunction);
+    kNearestNeighborsHelper(this, k, queue, result);
+    return result;
+}
+
 
 
 
