@@ -178,7 +178,7 @@ int main(int argc, char *argv[]) {
         //cout << point << endl;
     }
 
-    Point *pointsArray = (Point *) (malloc(n * sizeof(Point)));
+    auto *pointsArray = (Point *) (malloc(n * sizeof(Point)));
     int i = 0;
     for (auto point: points) {
         pointsArray[i++] = point;
@@ -195,6 +195,16 @@ int main(int argc, char *argv[]) {
     for (auto point: nns2) {
         //cout << point << "\n";
     }
+
+    MyKDTree myKdTree(points, area, 0);
+    myKdTree.buildTree();
+
+    auto start4 = std::chrono::high_resolution_clock::now();
+    vector<Point> nns4 = myKdTree.kNearestNeighbors(p, k);
+    auto stop4 = std::chrono::high_resolution_clock::now();
+    auto duration_us4 = std::chrono::duration_cast<std::chrono::microseconds>(stop4 - start4);
+    std::cout << "Time taken by KD-Tree_Efficient: " << duration_us4.count() << " µs - size: " << nns4.size() << std::endl;
+
 
     return 0;
 }

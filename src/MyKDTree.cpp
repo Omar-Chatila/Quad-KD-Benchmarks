@@ -143,3 +143,38 @@ void MyKDTree::appendPoint(Point &point, int lev) {
         swap(points[0], point);
     }
 }
+
+void MyKDTree::kNearestNeighborsHelper(MyKDTree *node, int k,
+                                       priority_queue<MyKDTree *, std::vector<MyKDTree *>, CompareMKDTree> &queue,
+                                       vector<Point> &result) {
+    if (node == nullptr) {
+        return;
+    }
+
+    if (node->isLeaf()) {
+        queue.push(node);
+    } else {
+        queue.push(node->leftChild);
+        queue.push(node->rightChild);
+    }
+
+    while (!queue.empty() && result.size() < k) {
+        MyKDTree *current = queue.top();
+        queue.pop();
+
+        if (current->isLeaf()) {
+            result.push_back(current->points[0]);
+        } else {
+            kNearestNeighborsHelper(current, k, queue, result);
+        }
+    }
+}
+
+vector<Point> MyKDTree::kNearestNeighbors(Point &queryPoint, int k) {
+    vector<Point> result;
+    result.reserve(k);
+    CompareMKDTree compareFunction(queryPoint);
+    std::priority_queue<MyKDTree *, vector<MyKDTree *>, CompareMKDTree> queue(compareFunction);
+    kNearestNeighborsHelper(this, k, queue, result);
+    return result;
+}

@@ -12,6 +12,16 @@ using namespace std;
 
 class MyKDTree {
 
+    struct CompareMKDTree {
+        const Point &queryPoint;
+
+        explicit CompareMKDTree(const Point &p) : queryPoint(p) {}
+
+        bool operator()(MyKDTree *a, MyKDTree *b) const {
+            return sqDistanceFrom(a->area, queryPoint) > sqDistanceFrom(b->area, queryPoint);
+        }
+    };
+
 private:
     Area area{};
     int level;
@@ -23,6 +33,10 @@ private:
     void setHorizontalChildren(int level);
 
     void appendPoint(Point &point, int level);
+
+    void kNearestNeighborsHelper(MyKDTree *node, int k,
+                                 priority_queue<MyKDTree *, std::vector<MyKDTree *>, CompareMKDTree> &queue,
+                                 std::vector<Point> &result);
 
 public:
 
@@ -43,6 +57,8 @@ public:
     bool isEmpty();
 
     void add(Point &point);
+
+    vector<Point> kNearestNeighbors(Point &point, int k);
 };
 
 
