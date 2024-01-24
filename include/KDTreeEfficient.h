@@ -70,7 +70,9 @@ public:
     KDTreeEfficient *getRightChild();
 
     vector<Point> kNearestNeighbors(Point &point, int k);
+
 };
+
 
 
 #endif //QUADKDBENCH_KDTREEEFFICIENT_H

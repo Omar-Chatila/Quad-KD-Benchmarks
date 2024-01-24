@@ -2,16 +2,17 @@
 // Created by omarc on 12/01/2024.
 //
 
-#include "../include/QuadTree.h"
+#include "../include/PointRegionQuadTree.h"
 #include "functional"
 #include <queue>
 
-QuadTree::QuadTree(Area square, vector<Point> &elements) {
+PointRegionQuadTree::PointRegionQuadTree(Area square, vector<Point> &elements, int capacity) {
     this->square = square;
     this->elements = elements;
+    this->capacity = capacity;
 }
 
-int QuadTree::getHeight() {
+int PointRegionQuadTree::getHeight() {
     if (isNodeLeaf()) {
         return 1;
     }
@@ -23,12 +24,12 @@ int QuadTree::getHeight() {
     return maxHeight + 1;
 }
 
-bool QuadTree::isNodeLeaf() {
+bool PointRegionQuadTree::isNodeLeaf() {
     return this->children[0] == nullptr;
 }
 
-void QuadTree::buildTree() {
-    if (this->elements.size() > 1) {
+void PointRegionQuadTree::buildTree() {
+    if (this->elements.size() > capacity) {
         partition();
         children[NORTH_EAST]->buildTree();
         children[NORTH_WEST]->buildTree();
@@ -37,7 +38,7 @@ void QuadTree::buildTree() {
     }
 }
 
-void QuadTree::partition() {
+void PointRegionQuadTree::partition() {
     double xMid = (this->square.xMin + this->square.xMax) / 2.0;
     double yMid = (this->square.yMin + this->square.yMax) / 2.0;
     Area *quadrants = splitArea(this->square, xMid, yMid);
@@ -57,16 +58,18 @@ void QuadTree::partition() {
     //elements.clear();
 
     for (int i = 0; i < 4; i++) {
-        children[i] = new QuadTree(quadrants[i], childrenElements[i]);
+        children[i] = new PointRegionQuadTree(quadrants[i], childrenElements[i], capacity);
     }
     free(quadrants);
 }
 
-std::list<Point> QuadTree::query(Area &queryRectangle) {
+std::list<Point> PointRegionQuadTree::query(Area &queryRectangle) {
     list<Point> result;
     if (this->isPointLeaf()) {
-        if (containsPoint(queryRectangle, this->elements.front())) {
-            result.push_back(this->elements.front());
+        for (auto point : this->elements) {
+            if (containsPoint(queryRectangle, point)) {
+                result.push_back(point);
+            }
         }
         return result;
     } else if (containsArea(queryRectangle, this->square)) {
@@ -83,19 +86,20 @@ std::list<Point> QuadTree::query(Area &queryRectangle) {
     return result;
 }
 
-bool QuadTree::isPointLeaf() {
-    return this->elements.size() == 1;
+bool PointRegionQuadTree::isPointLeaf() {
+    return !this->elements.empty() && this->elements.size() <= capacity;
 }
 
-bool QuadTree::contains(Point &point) {
-    QuadTree *current = this;
+bool PointRegionQuadTree::contains(Point &point) {
+    PointRegionQuadTree *current = this;
     while (!current->isNodeLeaf()) {
         current = locateQuadrant(point.x, point.y, current);
     }
-    return !current->elements.empty() && current->elements[0] == point;
+    return !current->elements.empty()
+        && find(current->elements.begin(), current->elements.end(), point) != current->elements.end();
 }
 
-QuadTree *QuadTree::locateQuadrant(double pointX, double pointY, QuadTree *current) {
+PointRegionQuadTree *PointRegionQuadTree::locateQuadrant(double pointX, double pointY, PointRegionQuadTree *current) {
     double centerX = (current->square.xMin + current->square.xMax) / 2.0;
     double centerY = (current->square.yMin + current->square.yMax) / 2.0;
 
@@ -110,12 +114,12 @@ QuadTree *QuadTree::locateQuadrant(double pointX, double pointY, QuadTree *curre
     return current->children[quadrant];
 }
 
-bool QuadTree::isEmpty() {
+bool PointRegionQuadTree::isEmpty() {
     return this->elements.empty();
 }
 
-void QuadTree::add(Point &point) {
-    QuadTree *current = this;
+void PointRegionQuadTree::add(Point &point) {
+    PointRegionQuadTree *current = this;
     if (current->isEmpty()) {
         current->elements.push_back(point);
         return;
@@ -126,30 +130,30 @@ void QuadTree::add(Point &point) {
     }
     current->elements.push_back(point);
 
-    if (current->elements.size() > 1) {
+    if (current->elements.size() > capacity) {
         current->partition();
     }
 }
 
-QuadTree *QuadTree::getNorthEast() {
+PointRegionQuadTree *PointRegionQuadTree::getNorthEast() {
     return this->children[NORTH_EAST];
 }
 
-QuadTree *QuadTree::getNorthWest() {
+PointRegionQuadTree *PointRegionQuadTree::getNorthWest() {
     return this->children[NORTH_WEST];
 }
 
-QuadTree *QuadTree::getSouthWest() {
+PointRegionQuadTree *PointRegionQuadTree::getSouthWest() {
     return this->children[SOUTH_WEST];
 }
 
-QuadTree *QuadTree::getSouthEast() {
+PointRegionQuadTree *PointRegionQuadTree::getSouthEast() {
     return this->children[SOUTH_EAST];
 }
 
-void QuadTree::kNearestNeighborsHelper(QuadTree *node, int k,
-                                       std::priority_queue<QuadTree *, std::vector<QuadTree *>, CompareQuadTree> &queue,
-                                       std::vector<Point> &result) {
+void PointRegionQuadTree::kNearestNeighborsHelper(PointRegionQuadTree *node, int k,
+                                       std::priority_queue<PointRegionQuadTree *, std::vector<PointRegionQuadTree *>, ComparePointRegionQuadTree> &queue,
+                                       std::vector<Point> &result, Point &queryPoint) {
     if (node == nullptr) {
         return;
     }
@@ -164,23 +168,29 @@ void QuadTree::kNearestNeighborsHelper(QuadTree *node, int k,
     }
 
     while (!queue.empty() && result.size() < k) {
-        QuadTree *current = queue.top();
+        PointRegionQuadTree *current = queue.top();
         queue.pop();
-
         if (current->isPointLeaf()) {
-            result.push_back(current->elements[0]);
+            std::sort(current->elements.begin(), current->elements.end(),[queryPoint] (const Point &A, const Point &B){
+                return pointDistance(queryPoint, A) < pointDistance(queryPoint, B);
+            });
+            for (auto leafPoint : current->elements) {
+                if (result.size() < k) {
+                    result.push_back(leafPoint);
+                }
+            }
         } else {
-            kNearestNeighborsHelper(current, k, queue, result);
+            kNearestNeighborsHelper(current, k, queue, result, queryPoint);
         }
     }
 }
 
-std::vector<Point> QuadTree::kNearestNeighbors(Point &queryPoint, int k) {
+std::vector<Point> PointRegionQuadTree::kNearestNeighbors(Point &queryPoint, int k) {
     vector<Point> result;
     result.reserve(k);
-    CompareQuadTree compareFunction(queryPoint);
-    std::priority_queue<QuadTree *, vector<QuadTree *>, CompareQuadTree> queue(compareFunction);
-    kNearestNeighborsHelper(this, k, queue, result);
+    ComparePointRegionQuadTree compareFunction(queryPoint);
+    std::priority_queue<PointRegionQuadTree *, vector<PointRegionQuadTree *>, ComparePointRegionQuadTree> queue(compareFunction);
+    kNearestNeighborsHelper(this, k, queue, result, queryPoint);
     return result;
 }
 

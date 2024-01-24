@@ -174,7 +174,7 @@ BENCHMARK(BM_test)->Unit(benchmark::kMillisecond);
 #define BENCHMARK_HAS_CXX17
 #endif
 
-#include <stdint.h>
+#include <cstdint>
 
 #include <algorithm>
 #include <cassert>
@@ -187,7 +187,7 @@ BENCHMARK(BM_test)->Unit(benchmark::kMillisecond);
 #include <utility>
 #include <vector>
 
-#include "benchmark/export.h"
+#include "export.h"
 
 #if defined(BENCHMARK_HAS_CXX11)
 #include <atomic>
@@ -919,7 +919,7 @@ class BENCHMARK_EXPORT State {
 
   // Range arguments for this run. CHECKs if the argument has been set.
   BENCHMARK_ALWAYS_INLINE
-  int64_t range(std::size_t pos = 0) const {
+  int range(std::size_t pos = 0) const {
     assert(range_.size() > pos);
     return range_[pos];
   }

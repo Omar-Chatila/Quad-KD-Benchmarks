@@ -3,6 +3,7 @@
 #include <sstream>
 #include "../include/KDTreeEfficient.h"
 #include "../include/TreeHelper.h"
+#include "../include/PointRegionQuadTree.h"
 #include "../include/QuadTree.h"
 #include "../include/MyKDTree.h"
 #include "../include/Util.h"
@@ -144,10 +145,7 @@ static void testMyKDTree() {
     writeStringToFile(queryResult, outputPath);
 }
 
-int main(int argc, char *argv[]) {
-    FAST_IO();
-    //int n = atoi(argv[1]);
-    //int k = atoi(argv[2]);
+static void nnsTest() {
     int n = 1'000'000, k = 100;
     double bounds = n;
     cout << "Nearest-Neighbor-Search - k: " << to_string(k) << " n: " << to_string(n) << endl;
@@ -156,6 +154,10 @@ int main(int argc, char *argv[]) {
     vector<Point> points = getRandomPoints(n);
     QuadTree quadTree(area, points);
     quadTree.buildTree();
+
+    PointRegionQuadTree pointRegionQuadTree(area, points, 6);
+    pointRegionQuadTree.buildTree();
+
     Point p{0.3 * bounds, 0.8 * bounds};
 
     auto start = std::chrono::high_resolution_clock::now();
@@ -164,19 +166,11 @@ int main(int argc, char *argv[]) {
     auto duration_us = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
     std::cout << "Time taken by QuadTree: " << duration_us.count() << " µs - size: " << nns.size() << std::endl;
 
-    for (auto point: nns) {
-        //cout << point << endl;
-    }
-
-    auto startN = std::chrono::high_resolution_clock::now();
-    vector<Point> naiveResult = naive_kNNS(p, points, k);
-    auto stopN = std::chrono::high_resolution_clock::now();
-    auto duration_usN = std::chrono::duration_cast<std::chrono::microseconds>(stopN - startN);
-    std::cout << "Time taken by Naive: " << duration_usN.count() << " µs" << std::endl;
-
-    for (auto point: naiveResult) {
-        //cout << point << endl;
-    }
+    auto start6 = std::chrono::high_resolution_clock::now();
+    vector<Point> nns6 = pointRegionQuadTree.kNearestNeighbors(p, k);
+    auto stop6 = std::chrono::high_resolution_clock::now();
+    auto duration_us6 = std::chrono::duration_cast<std::chrono::microseconds>(stop6 - start6);
+    std::cout << "Time taken by PR-QuadTree: " << duration_us6.count() << " µs - size: " << nns.size() << std::endl;
 
     auto *pointsArray = (Point *) (malloc(n * sizeof(Point)));
     int i = 0;
@@ -192,10 +186,6 @@ int main(int argc, char *argv[]) {
     auto duration_us3 = std::chrono::duration_cast<std::chrono::microseconds>(stop3 - start3);
     std::cout << "Time taken by KD-Tree_Efficient: " << duration_us3.count() << " µs - size: " << nns.size() << std::endl;
 
-    for (auto point: nns2) {
-        //cout << point << "\n";
-    }
-
     MyKDTree myKdTree(points, area, 0);
     myKdTree.buildTree();
 
@@ -205,7 +195,16 @@ int main(int argc, char *argv[]) {
     auto duration_us4 = std::chrono::duration_cast<std::chrono::microseconds>(stop4 - start4);
     std::cout << "Time taken by KD-Tree_Efficient: " << duration_us4.count() << " µs - size: " << nns4.size() << std::endl;
 
+    auto startN = std::chrono::high_resolution_clock::now();
+    vector<Point> naiveResult = naive_kNNS(p, points, k);
+    auto stopN = std::chrono::high_resolution_clock::now();
+    auto duration_usN = std::chrono::duration_cast<std::chrono::microseconds>(stopN - startN);
+    std::cout << "Time taken by Naive: " << duration_usN.count() << " µs" << std::endl;
+}
 
+int main(int argc, char *argv[]) {
+    FAST_IO();
+    nnsTest();
     return 0;
 }
 
