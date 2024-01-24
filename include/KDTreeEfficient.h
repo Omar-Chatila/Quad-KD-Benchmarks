@@ -12,10 +12,10 @@ using namespace std;
 
 class KDTreeEfficient {
 
-    struct CompareKDTree {
+    struct CompareKDETree {
         const Point &queryPoint;
 
-        explicit CompareKDTree(const Point &p) : queryPoint(p) {}
+        explicit CompareKDETree(const Point &p) : queryPoint(p) {}
 
         bool operator()(KDTreeEfficient *a, KDTreeEfficient *b) const {
             return sqDistanceFrom(a->area, queryPoint) > sqDistanceFrom(b->area, queryPoint);
@@ -45,7 +45,7 @@ private:
     void setHorizontalChildren(int level);
 
     void kNearestNeighborsHelper(KDTreeEfficient *node, int k,
-                                 priority_queue<KDTreeEfficient *, std::vector<KDTreeEfficient *>, CompareKDTree> &queue,
+                                 priority_queue<KDTreeEfficient *, std::vector<KDTreeEfficient *>, CompareKDETree> &queue,
                                  std::vector<Point> &result);
 
 public:
@@ -70,7 +70,9 @@ public:
     KDTreeEfficient *getRightChild();
 
     vector<Point> kNearestNeighbors(Point &point, int k);
+
 };
+
 
 
 #endif //QUADKDBENCH_KDTREEEFFICIENT_H

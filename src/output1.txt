@@ -1,0 +1,213 @@
+-------------------------------------------------------------------------------------------------------
+Benchmark                                                             Time             CPU   Iterations
+-------------------------------------------------------------------------------------------------------
+Build Quadtree/512/iterations:1                                   0.621 ms        0.611 ms            1
+Build Quadtree/1024/iterations:1                                   1.23 ms         1.23 ms            1
+Build Quadtree/2048/iterations:1                                   2.57 ms         2.57 ms            1
+Build Quadtree/4096/iterations:1                                   5.15 ms         5.15 ms            1
+Build Quadtree/8192/iterations:1                                   9.01 ms         8.99 ms            1
+Build Quadtree/16384/iterations:1                                  18.2 ms         18.1 ms            1
+Build Quadtree/32768/iterations:1                                  36.8 ms         36.7 ms            1
+Build Quadtree/65536/iterations:1                                  74.3 ms         74.2 ms            1
+Build Quadtree/131072/iterations:1                                  150 ms          150 ms            1
+Build Quadtree/262144/iterations:1                                  304 ms          303 ms            1
+Build Quadtree/524288/iterations:1                                  610 ms          609 ms            1
+Build Quadtree/1048576/iterations:1                                1231 ms         1229 ms            1
+Build Quadtree/2097152/iterations:1                                2486 ms         2482 ms            1
+Build Quadtree/iterations:1_BigO                                1181.90 N       1179.98 N    
+Build Quadtree/iterations:1_RMS                                       1 %             1 %    
+Build PR-Quadtree/512/iterations:1                                0.272 ms        0.272 ms            1
+Build PR-Quadtree/1024/iterations:1                               0.480 ms        0.480 ms            1
+Build PR-Quadtree/2048/iterations:1                               0.994 ms        0.994 ms            1
+Build PR-Quadtree/4096/iterations:1                                2.04 ms         2.04 ms            1
+Build PR-Quadtree/8192/iterations:1                                4.27 ms         4.26 ms            1
+Build PR-Quadtree/16384/iterations:1                               9.08 ms         9.06 ms            1
+Build PR-Quadtree/32768/iterations:1                               17.9 ms         17.8 ms            1
+Build PR-Quadtree/65536/iterations:1                               36.4 ms         36.4 ms            1
+Build PR-Quadtree/131072/iterations:1                              69.6 ms         69.6 ms            1
+Build PR-Quadtree/262144/iterations:1                               138 ms          138 ms            1
+Build PR-Quadtree/524288/iterations:1                               292 ms          292 ms            1
+Build PR-Quadtree/1048576/iterations:1                              539 ms          538 ms            1
+Build PR-Quadtree/2097152/iterations:1                             1154 ms         1153 ms            1
+Build PR-Quadtree/iterations:1_BigO                              543.54 N        542.82 N    
+Build PR-Quadtree/iterations:1_RMS                                    6 %             6 %    
+Build MyKDTree/512/iterations:1                                    1.03 ms         1.03 ms            1
+Build MyKDTree/1024/iterations:1                                   2.19 ms         2.18 ms            1
+Build MyKDTree/2048/iterations:1                                   4.81 ms         4.79 ms            1
+Build MyKDTree/4096/iterations:1                                   10.7 ms         10.7 ms            1
+Build MyKDTree/8192/iterations:1                                   22.7 ms         22.7 ms            1
+Build MyKDTree/16384/iterations:1                                  48.9 ms         48.9 ms            1
+Build MyKDTree/32768/iterations:1                                   106 ms          106 ms            1
+Build MyKDTree/65536/iterations:1                                   228 ms          228 ms            1
+Build MyKDTree/131072/iterations:1                                  496 ms          496 ms            1
+Build MyKDTree/262144/iterations:1                                 1067 ms         1066 ms            1
+Build MyKDTree/524288/iterations:1                                 2304 ms         2302 ms            1
+Build MyKDTree/1048576/iterations:1                                4935 ms         4930 ms            1
+Build MyKDTree/2097152/iterations:1                               10655 ms        10643 ms            1
+Build MyKDTree/iterations:1_BigO                                4960.85 N       4955.73 N    
+Build MyKDTree/iterations:1_RMS                                      10 %            10 %    
+Build KD-Tree-Efficient/512/iterations:1                          0.139 ms        0.139 ms            1
+Build KD-Tree-Efficient/1024/iterations:1                         0.298 ms        0.298 ms            1
+Build KD-Tree-Efficient/2048/iterations:1                         0.609 ms        0.609 ms            1
+Build KD-Tree-Efficient/4096/iterations:1                          1.33 ms         1.33 ms            1
+Build KD-Tree-Efficient/8192/iterations:1                          2.85 ms         2.84 ms            1
+Build KD-Tree-Efficient/16384/iterations:1                         5.97 ms         5.96 ms            1
+Build KD-Tree-Efficient/32768/iterations:1                         12.4 ms         12.4 ms            1
+Build KD-Tree-Efficient/65536/iterations:1                         25.8 ms         25.8 ms            1
+Build KD-Tree-Efficient/131072/iterations:1                        61.8 ms         61.7 ms            1
+Build KD-Tree-Efficient/262144/iterations:1                         131 ms          131 ms            1
+Build KD-Tree-Efficient/524288/iterations:1                         271 ms          271 ms            1
+Build KD-Tree-Efficient/1048576/iterations:1                        573 ms          573 ms            1
+Build KD-Tree-Efficient/2097152/iterations:1                       1184 ms         1182 ms            1
+Build KD-Tree-Efficient/iterations:1_BigO                        557.86 N        557.12 N    
+Build KD-Tree-Efficient/iterations:1_RMS                              6 %             6 %    
+Query Quadtree - Variable PointCount/512/iterations:1             0.016 ms        0.016 ms            1
+Query Quadtree - Variable PointCount/1024/iterations:1            0.020 ms        0.020 ms            1
+Query Quadtree - Variable PointCount/2048/iterations:1            0.042 ms        0.042 ms            1
+Query Quadtree - Variable PointCount/4096/iterations:1            0.055 ms        0.055 ms            1
+Query Quadtree - Variable PointCount/8192/iterations:1            0.091 ms        0.090 ms            1
+Query Quadtree - Variable PointCount/16384/iterations:1           0.200 ms        0.200 ms            1
+Query Quadtree - Variable PointCount/32768/iterations:1           0.379 ms        0.378 ms            1
+Query Quadtree - Variable PointCount/65536/iterations:1           0.762 ms        0.761 ms            1
+Query Quadtree - Variable PointCount/131072/iterations:1           1.40 ms         1.40 ms            1
+Query Quadtree - Variable PointCount/262144/iterations:1           2.78 ms         2.78 ms            1
+Query Quadtree - Variable PointCount/524288/iterations:1           5.31 ms         5.31 ms            1
+Query Quadtree - Variable PointCount/1048576/iterations:1          10.4 ms         10.4 ms            1
+Query Quadtree - Variable PointCount/2097152/iterations:1          22.0 ms         22.0 ms            1
+Query Quadtree - Variable PointCount/iterations:1_BigO            10.38 N         10.36 N    
+Query Quadtree - Variable PointCount/iterations:1_RMS                 4 %             4 %    
+Query PR-Quadtree - Variable PointCount/512/iterations:1          0.010 ms        0.010 ms            1
+Query PR-Quadtree - Variable PointCount/1024/iterations:1         0.017 ms        0.017 ms            1
+Query PR-Quadtree - Variable PointCount/2048/iterations:1         0.023 ms        0.023 ms            1
+Query PR-Quadtree - Variable PointCount/4096/iterations:1         0.048 ms        0.048 ms            1
+Query PR-Quadtree - Variable PointCount/8192/iterations:1         0.095 ms        0.095 ms            1
+Query PR-Quadtree - Variable PointCount/16384/iterations:1        0.179 ms        0.179 ms            1
+Query PR-Quadtree - Variable PointCount/32768/iterations:1        0.319 ms        0.319 ms            1
+Query PR-Quadtree - Variable PointCount/65536/iterations:1        0.697 ms        0.697 ms            1
+Query PR-Quadtree - Variable PointCount/131072/iterations:1        1.37 ms         1.37 ms            1
+Query PR-Quadtree - Variable PointCount/262144/iterations:1        2.63 ms         2.63 ms            1
+Query PR-Quadtree - Variable PointCount/524288/iterations:1        5.23 ms         5.22 ms            1
+Query PR-Quadtree - Variable PointCount/1048576/iterations:1       10.1 ms         10.1 ms            1
+Query PR-Quadtree - Variable PointCount/2097152/iterations:1       21.9 ms         21.9 ms            1
+Query PR-Quadtree - Variable PointCount/iterations:1_BigO         10.27 N         10.26 N    
+Query PR-Quadtree - Variable PointCount/iterations:1_RMS              6 %             6 %    
+Query MyKDTree - Variable PointCount/512/iterations:1             0.013 ms        0.013 ms            1
+Query MyKDTree - Variable PointCount/1024/iterations:1            0.029 ms        0.029 ms            1
+Query MyKDTree - Variable PointCount/2048/iterations:1            0.053 ms        0.053 ms            1
+Query MyKDTree - Variable PointCount/4096/iterations:1            0.091 ms        0.091 ms            1
+Query MyKDTree - Variable PointCount/8192/iterations:1            0.172 ms        0.171 ms            1
+Query MyKDTree - Variable PointCount/16384/iterations:1           0.338 ms        0.337 ms            1
+Query MyKDTree - Variable PointCount/32768/iterations:1           0.645 ms        0.644 ms            1
+Query MyKDTree - Variable PointCount/65536/iterations:1            1.28 ms         1.28 ms            1
+Query MyKDTree - Variable PointCount/131072/iterations:1           2.53 ms         2.53 ms            1
+Query MyKDTree - Variable PointCount/262144/iterations:1           4.77 ms         4.77 ms            1
+Query MyKDTree - Variable PointCount/524288/iterations:1           9.27 ms         9.26 ms            1
+Query MyKDTree - Variable PointCount/1048576/iterations:1          19.2 ms         19.2 ms            1
+Query MyKDTree - Variable PointCount/2097152/iterations:1          38.6 ms         38.6 ms            1
+Query MyKDTree - Variable PointCount/iterations:1_BigO            18.37 N         18.35 N    
+Query MyKDTree - Variable PointCount/iterations:1_RMS                 2 %             2 %    
+Query KD-E - Variable PointCount/512/iterations:1                 0.002 ms        0.002 ms            1
+Query KD-E - Variable PointCount/1024/iterations:1                0.001 ms        0.001 ms            1
+Query KD-E - Variable PointCount/2048/iterations:1                0.001 ms        0.001 ms            1
+Query KD-E - Variable PointCount/4096/iterations:1                0.001 ms        0.001 ms            1
+Query KD-E - Variable PointCount/8192/iterations:1                0.001 ms        0.001 ms            1
+Query KD-E - Variable PointCount/16384/iterations:1               0.001 ms        0.001 ms            1
+Query KD-E - Variable PointCount/32768/iterations:1               0.001 ms        0.001 ms            1
+Query KD-E - Variable PointCount/65536/iterations:1               0.001 ms        0.001 ms            1
+Query KD-E - Variable PointCount/131072/iterations:1              0.002 ms        0.001 ms            1
+Query KD-E - Variable PointCount/262144/iterations:1              0.002 ms        0.001 ms            1
+Query KD-E - Variable PointCount/524288/iterations:1              0.002 ms        0.001 ms            1
+Query KD-E - Variable PointCount/1048576/iterations:1             0.003 ms        0.002 ms            1
+Query KD-E - Variable PointCount/2097152/iterations:1             0.003 ms        0.002 ms            1
+Query KD-E - Variable PointCount/iterations:1_BigO                 0.00 N          0.00 N    
+Query KD-E - Variable PointCount/iterations:1_RMS                    72 %            77 %    
+Query Naive - Variable PointCount/512/iterations:1                0.011 ms        0.011 ms            1
+Query Naive - Variable PointCount/1024/iterations:1               0.020 ms        0.020 ms            1
+Query Naive - Variable PointCount/2048/iterations:1               0.038 ms        0.038 ms            1
+Query Naive - Variable PointCount/4096/iterations:1               0.073 ms        0.073 ms            1
+Query Naive - Variable PointCount/8192/iterations:1               0.145 ms        0.145 ms            1
+Query Naive - Variable PointCount/16384/iterations:1              0.288 ms        0.288 ms            1
+Query Naive - Variable PointCount/32768/iterations:1              0.575 ms        0.575 ms            1
+Query Naive - Variable PointCount/65536/iterations:1               1.15 ms         1.15 ms            1
+Query Naive - Variable PointCount/131072/iterations:1              2.29 ms         2.29 ms            1
+Query Naive - Variable PointCount/262144/iterations:1              4.59 ms         4.58 ms            1
+Query Naive - Variable PointCount/524288/iterations:1              9.20 ms         9.19 ms            1
+Query Naive - Variable PointCount/1048576/iterations:1             18.8 ms         18.7 ms            1
+Query Naive - Variable PointCount/2097152/iterations:1             36.8 ms         36.7 ms            1
+Query Naive - Variable PointCount/iterations:1_BigO                -nan N          -nan N    
+Query Naive - Variable PointCount/iterations:1_RMS                 -nan %          -nan %    
+Quadtree - Contains/512/iterations:1                              0.015 ms        0.015 ms            1
+Quadtree - Contains/1024/iterations:1                             0.015 ms        0.015 ms            1
+Quadtree - Contains/2048/iterations:1                             0.017 ms        0.017 ms            1
+Quadtree - Contains/4096/iterations:1                             0.019 ms        0.019 ms            1
+Quadtree - Contains/8192/iterations:1                             0.021 ms        0.021 ms            1
+Quadtree - Contains/16384/iterations:1                            0.031 ms        0.031 ms            1
+Quadtree - Contains/32768/iterations:1                            0.040 ms        0.040 ms            1
+Quadtree - Contains/65536/iterations:1                            0.053 ms        0.052 ms            1
+Quadtree - Contains/131072/iterations:1                           0.079 ms        0.078 ms            1
+Quadtree - Contains/262144/iterations:1                           0.100 ms        0.099 ms            1
+Quadtree - Contains/524288/iterations:1                           0.109 ms        0.107 ms            1
+Quadtree - Contains/1048576/iterations:1                          0.124 ms        0.123 ms            1
+Quadtree - Contains/2097152/iterations:1                          0.138 ms        0.137 ms            1
+Quadtree - Contains/iterations:1_BigO                              -nan N          -nan N    
+Quadtree - Contains/iterations:1_RMS                               -nan %          -nan %    
+PR-Quadtree - Contains/512/iterations:1                           0.018 ms        0.018 ms            1
+PR-Quadtree - Contains/1024/iterations:1                          0.020 ms        0.020 ms            1
+PR-Quadtree - Contains/2048/iterations:1                          0.020 ms        0.020 ms            1
+PR-Quadtree - Contains/4096/iterations:1                          0.022 ms        0.022 ms            1
+PR-Quadtree - Contains/8192/iterations:1                          0.024 ms        0.024 ms            1
+PR-Quadtree - Contains/16384/iterations:1                         0.030 ms        0.030 ms            1
+PR-Quadtree - Contains/32768/iterations:1                         0.036 ms        0.036 ms            1
+PR-Quadtree - Contains/65536/iterations:1                         0.051 ms        0.048 ms            1
+PR-Quadtree - Contains/131072/iterations:1                        0.061 ms        0.059 ms            1
+PR-Quadtree - Contains/262144/iterations:1                        0.090 ms        0.089 ms            1
+PR-Quadtree - Contains/524288/iterations:1                        0.104 ms        0.103 ms            1
+PR-Quadtree - Contains/1048576/iterations:1                       0.117 ms        0.117 ms            1
+PR-Quadtree - Contains/2097152/iterations:1                       0.121 ms        0.120 ms            1
+PR-Quadtree - Contains/iterations:1_BigO                           -nan N          -nan N    
+PR-Quadtree - Contains/iterations:1_RMS                            -nan %          -nan %    
+KD_Tree_Efficient - Contains/512/iterations:1                     0.012 ms        0.012 ms            1
+KD_Tree_Efficient - Contains/1024/iterations:1                    0.011 ms        0.011 ms            1
+KD_Tree_Efficient - Contains/2048/iterations:1                    0.014 ms        0.014 ms            1
+KD_Tree_Efficient - Contains/4096/iterations:1                    0.015 ms        0.015 ms            1
+KD_Tree_Efficient - Contains/8192/iterations:1                    0.017 ms        0.017 ms            1
+KD_Tree_Efficient - Contains/16384/iterations:1                   0.026 ms        0.026 ms            1
+KD_Tree_Efficient - Contains/32768/iterations:1                   0.032 ms        0.032 ms            1
+KD_Tree_Efficient - Contains/65536/iterations:1                   0.046 ms        0.046 ms            1
+KD_Tree_Efficient - Contains/131072/iterations:1                  0.074 ms        0.073 ms            1
+KD_Tree_Efficient - Contains/262144/iterations:1                  0.113 ms        0.112 ms            1
+KD_Tree_Efficient - Contains/524288/iterations:1                  0.142 ms        0.141 ms            1
+KD_Tree_Efficient - Contains/1048576/iterations:1                 0.169 ms        0.168 ms            1
+KD_Tree_Efficient - Contains/2097152/iterations:1                 0.168 ms        0.167 ms            1
+KD_Tree_Efficient - Contains/iterations:1_BigO                     -nan N          -nan N    
+KD_Tree_Efficient - Contains/iterations:1_RMS                      -nan %          -nan %    
+MyKDTree - Contains/512/iterations:1                              0.034 ms        0.034 ms            1
+MyKDTree - Contains/1024/iterations:1                             0.038 ms        0.038 ms            1
+MyKDTree - Contains/2048/iterations:1                             0.043 ms        0.043 ms            1
+MyKDTree - Contains/4096/iterations:1                             0.053 ms        0.053 ms            1
+MyKDTree - Contains/8192/iterations:1                             0.056 ms        0.053 ms            1
+MyKDTree - Contains/16384/iterations:1                            0.066 ms        0.066 ms            1
+MyKDTree - Contains/32768/iterations:1                            0.104 ms        0.103 ms            1
+MyKDTree - Contains/65536/iterations:1                            0.159 ms        0.158 ms            1
+MyKDTree - Contains/131072/iterations:1                           0.191 ms        0.190 ms            1
+MyKDTree - Contains/262144/iterations:1                           0.242 ms        0.241 ms            1
+MyKDTree - Contains/524288/iterations:1                           0.265 ms        0.264 ms            1
+MyKDTree - Contains/1048576/iterations:1                          0.306 ms        0.304 ms            1
+MyKDTree - Contains/2097152/iterations:1                          0.336 ms        0.334 ms            1
+MyKDTree - Contains/iterations:1_BigO                              -nan N          -nan N    
+MyKDTree - Contains/iterations:1_RMS                               -nan %          -nan %    
+Naive - Contains/512/iterations:1                                 0.184 ms        0.184 ms            1
+Naive - Contains/1024/iterations:1                                0.363 ms        0.363 ms            1
+Naive - Contains/2048/iterations:1                                0.727 ms        0.723 ms            1
+Naive - Contains/4096/iterations:1                                 1.44 ms         1.44 ms            1
+Naive - Contains/8192/iterations:1                                 5.09 ms         5.08 ms            1
+Naive - Contains/16384/iterations:1                                5.63 ms         5.63 ms            1
+Naive - Contains/32768/iterations:1                                11.3 ms         11.3 ms            1
+Naive - Contains/65536/iterations:1                                24.0 ms         24.0 ms            1
+Naive - Contains/131072/iterations:1                               45.7 ms         45.6 ms            1
+Naive - Contains/262144/iterations:1                               92.8 ms         92.7 ms            1
+Naive - Contains/524288/iterations:1                                183 ms          183 ms            1
+Naive - Contains/1048576/iterations:1                               366 ms          366 ms            1
+Naive - Contains/2097152/iterations:1                               738 ms          737 ms            1
+Naive - Contains/iterations:1_BigO                                 -nan N          -nan N    
+Naive - Contains/iterations:1_RMS                                  -nan %          -nan %    

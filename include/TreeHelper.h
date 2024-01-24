@@ -11,6 +11,7 @@
 #include "QuadTree.h"
 #include "Util.h"
 #include "MyKDTree.h"
+#include "PointRegionQuadTree.h"
 
 using namespace std;
 
@@ -40,6 +41,16 @@ inline QuadTree buildQuadTreeRandom(int pointNumber) {
     double bounds = pointNumber;
     Area area{0, bounds, 0, bounds};
     QuadTree quadTree(area, points);
+    quadTree.buildTree();
+    return quadTree;
+}
+
+inline PointRegionQuadTree buildPRQuadTreeRandom(int pointNumber) {
+    std::vector<Point> points = getRandomPoints(pointNumber);
+    double bounds = pointNumber;
+    int capacity = (int) max(log10(pointNumber), 4.0);
+    Area area{0, bounds, 0, bounds};
+    PointRegionQuadTree quadTree(area, points, capacity);
     quadTree.buildTree();
     return quadTree;
 }
@@ -85,6 +96,12 @@ inline void containsNaive(vector<Point> &searchPoints, vector<Point> &points) {
 }
 
 inline void qtContainsPoint(QuadTree &quadtree, vector<Point> &points) {
+    for (auto point: points) {
+        quadtree.contains(point);
+    }
+}
+
+inline void pr_qtContainsPoint(PointRegionQuadTree &quadtree, vector<Point> &points) {
     for (auto point: points) {
         quadtree.contains(point);
     }
