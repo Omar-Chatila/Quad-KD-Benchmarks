@@ -12,7 +12,10 @@ QuadTree::QuadTree(Area square, vector<Point> &elements) {
 }
 
 QuadTree::~QuadTree() {
-    deleteTree(this);
+    this->elements.clear();
+    for (auto & i : children) {
+        delete i;
+    }
 }
 
 void QuadTree::deleteTree(QuadTree *node) {

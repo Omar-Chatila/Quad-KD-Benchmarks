@@ -21,7 +21,9 @@ MyKDTree::MyKDTree(vector<Point> &points, Area &area, int level) {
 
 
 MyKDTree::~MyKDTree() {
-    deleteTree(this);
+    this->points.clear();
+    delete leftChild;
+    delete rightChild;
 }
 
 void MyKDTree::deleteTree(MyKDTree *node) {

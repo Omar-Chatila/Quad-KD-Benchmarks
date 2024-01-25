@@ -8,8 +8,7 @@
 #include "spacer.hpp"
 
 #define START 512
-#define END 1'048'577
-#define ITERATIONS 100
+#define END 2'097'153
 
 using namespace std;
 using namespace util;
@@ -290,29 +289,22 @@ static void queryBenchmarks() {
 static void containsBenchmarks() {
     util::spacer spacer{};
     vector<string> results;
-
-    cout << "Contains-Results in Bytes" << endl;
-
     for (int i = START; i < END; i *= 2) {
         int64_t space = quadTree_contains(i, spacer);
         results.push_back("Quadtree-Contains/" + to_string(i) + ": " + to_string(space));
     }
-
     for (int i = START; i < END; i *= 2) {
         int64_t space = kDTreeEfficient_Contains(i, spacer);
         results.push_back("EKD-Contains/" + to_string(i) + ": " + to_string(space));
     }
-
     for (int i = START; i < END; i *= 2) {
         int64_t space = myKDTree_Contains(i, spacer);
         results.push_back("MKD-Contains/" + to_string(i) + ": " + to_string(space));
     }
-
     for (int i = START; i < END; i *= 2) {
         int64_t space = naive_Contains(i, spacer);
         results.push_back("Naive-Contains/" + to_string(i) + ": " + to_string(space));
     }
-
     for (const auto &record: results) {
         cout << record << "\n";
     }
@@ -348,7 +340,6 @@ static void kNNSBenchmarks() {
         cout << record << "\n";
     }
 }
-
 
 int main() {
     cout << "++++++++++++++++++START CONTAINS BENCHMARKS++++++++++++++++++" << "\n";

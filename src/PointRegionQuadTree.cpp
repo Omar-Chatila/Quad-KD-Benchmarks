@@ -13,18 +13,11 @@ PointRegionQuadTree::PointRegionQuadTree(Area square, vector<Point> &elements, i
 }
 
 PointRegionQuadTree::~PointRegionQuadTree() {
-    deleteTree(this);
-}
-
-void PointRegionQuadTree::deleteTree(PointRegionQuadTree *node) {
-    if (node != nullptr) {
-        for (auto child: node->children) {
-            deleteTree(child);
-        }
-        delete node;
+    this->elements.clear();
+    for (auto & i : children) {
+        delete i;
     }
 }
-
 
 int PointRegionQuadTree::getHeight() {
     if (isNodeLeaf()) {

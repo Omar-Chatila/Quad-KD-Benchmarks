@@ -19,8 +19,8 @@ KDTreeEfficient::KDTreeEfficient(Point *points, int level, Area &area, int from,
 }
 
 KDTreeEfficient::~KDTreeEfficient() {
-    deleteTree(this);
-    free(this->points);
+    delete leftChild;
+    delete rightChild;
 }
 
 void KDTreeEfficient::deleteTree(KDTreeEfficient *node) {
