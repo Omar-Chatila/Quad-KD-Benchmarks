@@ -28,6 +28,8 @@ private:
     vector<Point> points;
     MyKDTree *leftChild{}, *rightChild{};
 
+    void deleteTree(MyKDTree *node);
+
     void setVerticalChildren(int level);
 
     void setHorizontalChildren(int level);
@@ -41,6 +43,8 @@ private:
 public:
 
     MyKDTree(vector<Point> &points, Area &area, int level);
+
+    ~MyKDTree();
 
     bool contains(Point p);
 

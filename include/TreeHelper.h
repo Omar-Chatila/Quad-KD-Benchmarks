@@ -15,43 +15,38 @@
 
 using namespace std;
 
-inline KDTreeEfficient buildEKD_Random(int pointNumber) {
+inline KDTreeEfficient *buildEKD_Random(int pointNumber) {
     int size = pointNumber - 1;
     auto *pointArray = (Point *) malloc(pointNumber * sizeof(Point));
-
     std::vector<Point> points = getRandomPoints(pointNumber);
-
     int i = 0;
     for (auto point: points) {
         pointArray[i++] = point;
     }
-
     double bounds = pointNumber;
-
     Area area{0, bounds, 0, bounds};
     int start = 0;
-    KDTreeEfficient kdTreeEfficient(pointArray, 0, area, start, size);
-    kdTreeEfficient.buildTree();
-
+    auto *kdTreeEfficient = new KDTreeEfficient(pointArray, 0, area, start, size);
+    kdTreeEfficient->buildTree();
     return kdTreeEfficient;
 }
 
-inline QuadTree buildQuadTreeRandom(int pointNumber) {
+inline QuadTree *buildQuadTreeRandom(int pointNumber) {
     std::vector<Point> points = getRandomPoints(pointNumber);
     double bounds = pointNumber;
     Area area{0, bounds, 0, bounds};
-    QuadTree quadTree(area, points);
-    quadTree.buildTree();
+    auto *quadTree = new QuadTree(area, points);
+    quadTree->buildTree();
     return quadTree;
 }
 
-inline PointRegionQuadTree buildPRQuadTreeRandom(int pointNumber) {
+inline PointRegionQuadTree *buildPRQuadTreeRandom(int pointNumber) {
     std::vector<Point> points = getRandomPoints(pointNumber);
     double bounds = pointNumber;
     int capacity = (int) max(log10(pointNumber), 4.0);
     Area area{0, bounds, 0, bounds};
-    PointRegionQuadTree quadTree(area, points, capacity);
-    quadTree.buildTree();
+    auto quadTree = new PointRegionQuadTree(area, points, capacity);
+    quadTree->buildTree();
     return quadTree;
 }
 
@@ -65,12 +60,12 @@ inline list<Point> testQuery(KDTreeEfficient &kdTreeEfficient) {
     return result;
 }
 
-inline MyKDTree buildMyKD_Random(int pointNumber) {
+inline MyKDTree *buildMyKD_Random(int pointNumber) {
     vector<Point> points = getRandomPoints(pointNumber);
     double bounds = pointNumber;
     Area area{0, bounds, 0, bounds};
-    MyKDTree myKdTree(points, area, 0);
-    myKdTree.buildTree();
+    auto myKdTree = new MyKDTree(points, area, 0);
+    myKdTree->buildTree();
     return myKdTree;
 }
 
@@ -95,27 +90,27 @@ inline void containsNaive(vector<Point> &searchPoints, vector<Point> &points) {
     }
 }
 
-inline void qtContainsPoint(QuadTree &quadtree, vector<Point> &points) {
+inline void qtContainsPoint(QuadTree *quadtree, vector<Point> &points) {
     for (auto point: points) {
-        quadtree.contains(point);
+        quadtree->contains(point);
     }
 }
 
-inline void pr_qtContainsPoint(PointRegionQuadTree &quadtree, vector<Point> &points) {
+inline void pr_qtContainsPoint(PointRegionQuadTree *quadtree, vector<Point> &points) {
     for (auto point: points) {
-        quadtree.contains(point);
+        quadtree->contains(point);
     }
 }
 
-inline void kdEContainsPoint(KDTreeEfficient &kdTreeEfficient, vector<Point> &points) {
+inline void kdEContainsPoint(KDTreeEfficient *kdTreeEfficient, vector<Point> &points) {
     for (auto point: points) {
-        kdTreeEfficient.contains(point);
+        kdTreeEfficient->contains(point);
     }
 }
 
-inline void myKdContainsPoint(MyKDTree &tree, vector<Point> &points) {
+inline void myKdContainsPoint(MyKDTree *tree, vector<Point> &points) {
     for (auto point: points) {
-        tree.contains(point);
+        tree->contains(point);
     }
 }
 

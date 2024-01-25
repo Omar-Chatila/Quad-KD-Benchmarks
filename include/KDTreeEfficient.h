@@ -38,6 +38,8 @@ private:
     KDTreeEfficient *rightChild{};
     double xMedian, yMedian;
 
+    void deleteTree(KDTreeEfficient *node);
+
     void buildTree(int level);
 
     void setVerticalChildren(int level);
@@ -72,7 +74,6 @@ public:
     vector<Point> kNearestNeighbors(Point &point, int k);
 
 };
-
 
 
 #endif //QUADKDBENCH_KDTREEEFFICIENT_H

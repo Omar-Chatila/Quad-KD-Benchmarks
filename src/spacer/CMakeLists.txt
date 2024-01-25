@@ -3,16 +3,16 @@ project(MyProject)
 
 # Add source files
 set(SOURCES
-    BenchSpace.cpp
-    ../MyKDTree.cpp
-    ../KDTreeEfficient.cpp
-    ../QuadTree.cpp
-    malloc_count.c
+        BenchSpace.cpp
+        ../MyKDTree.cpp
+        ../KDTreeEfficient.cpp
+        ../QuadTree.cpp
+        malloc_count.c
 )
 
 # Set compiler flags
 set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
 # Specify the executable name and source files
 add_executable(benchspace ${SOURCES})

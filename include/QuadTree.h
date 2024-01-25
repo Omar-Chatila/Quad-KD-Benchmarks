@@ -32,6 +32,8 @@ private:
     Area square{};
     vector<Point> elements;
 
+    void deleteTree(QuadTree *node);
+
     static QuadTree *locateQuadrant(double pointX, double pointY, QuadTree *current);
 
     void kNearestNeighborsHelper(QuadTree *node, int k,
@@ -41,6 +43,8 @@ private:
 public:
 
     QuadTree(Area square, vector<Point> &elements);
+
+    ~QuadTree();
 
     bool isNodeLeaf();
 

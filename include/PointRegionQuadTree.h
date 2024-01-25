@@ -23,7 +23,8 @@ class PointRegionQuadTree {
     friend std::ostream &operator<<(std::ostream &os, const PointRegionQuadTree &PointRegionQuadTree) {
         os << std::fixed << std::setprecision(1);
         if (!PointRegionQuadTree.elements.empty())
-            return os << "A:" << PointRegionQuadTree.square << "elements:" << PointRegionQuadTree.elements.front() << "\n";
+            return os << "A:" << PointRegionQuadTree.square << "elements:" << PointRegionQuadTree.elements.front()
+                      << "\n";
         return os << "A:" << PointRegionQuadTree.square << "\n";
     }
 
@@ -32,6 +33,8 @@ private:
     Area square{};
     vector<Point> elements;
     int capacity;
+
+    void deleteTree(PointRegionQuadTree *node);
 
     static PointRegionQuadTree *locateQuadrant(double pointX, double pointY, PointRegionQuadTree *current);
 
@@ -42,6 +45,8 @@ private:
 public:
 
     PointRegionQuadTree(Area square, vector<Point> &elements, int capacity);
+
+    ~PointRegionQuadTree();
 
     bool isNodeLeaf();
 

@@ -8,7 +8,7 @@
 #include "spacer.hpp"
 
 #define START 512
-#define END 2'097'153
+#define END 1'048'577
 #define ITERATIONS 100
 
 using namespace std;
@@ -17,38 +17,38 @@ using namespace util;
 
 static int64_t queryQuadTree(int pointNumber, spacer &spacer) {
     int size = pointNumber;
-    QuadTree quadTree = buildQuadTreeRandom(size);
+    QuadTree *quadTree = buildQuadTreeRandom(size);
     Area bigArea{0.3 * size, 0.5 * size, 0.54 * size, 0.64 * size};
     spacer.reset();
-    std::list result = quadTree.query(bigArea);
+    std::list result = quadTree->query(bigArea);
     int64_t spaceUsed = spacer.space_used();
-    result.clear();
+    delete quadTree;
     return spaceUsed;
 }
 
 
 static int64_t queryKDETree(int pointNumber, spacer &spacer) {
     int size = pointNumber;
-    KDTreeEfficient kdTreeEfficient = buildEKD_Random(pointNumber);
+    auto kdTreeEfficient = buildEKD_Random(pointNumber);
     Area bigArea{0.3 * size, 0.5 * size, 0.54 * size, 0.64 * size};
     spacer.reset();
-    kdTreeEfficient.query(bigArea);
-    std::list result = kdTreeEfficient.query(bigArea);
+    kdTreeEfficient->query(bigArea);
+    std::list result = kdTreeEfficient->query(bigArea);
     int64_t spaceUsed = spacer.space_used();
-    result.clear();
+    delete kdTreeEfficient;
     return spaceUsed;
 }
 
 
 static int64_t queryMYKDTree(int pointNumber, spacer &spacer) {
     int size = pointNumber;
-    MyKDTree myKdTree = buildMyKD_Random(size);
+    auto myKdTree = buildMyKD_Random(size);
     Area bigArea{0.3 * size, 0.5 * size, 0.54 * size, 0.64 * size};
     spacer.reset();
-    myKdTree.query(bigArea);
-    std::list result = myKdTree.query(bigArea);
+    myKdTree->query(bigArea);
+    std::list result = myKdTree->query(bigArea);
     int64_t spaceUsed = spacer.space_used();
-    result.clear();
+    delete myKdTree;
     return spaceUsed;
 }
 
@@ -60,14 +60,13 @@ static int64_t queryNaive(int pointNumber, spacer &spacer) {
     spacer.reset();
     std::list result = getQueryNaive(points, bigArea);
     int64_t spaceUsed = spacer.space_used();
-    result.clear();
     return spaceUsed;
 }
 
 
-static void quadTree_contains(int pointNumber) {
+static int64_t quadTree_contains(int pointNumber, spacer &spacer) {
     int size = pointNumber;
-    QuadTree quadTree = buildQuadTreeRandom(size);
+    QuadTree *quadTree = buildQuadTreeRandom(size);
     std::vector<Point> points = getRandomPoints(size);
     std::vector<Point> searchPoints;
     searchPoints.reserve(size / 100);
@@ -75,37 +74,46 @@ static void quadTree_contains(int pointNumber) {
     for (int i = 0; i < pointNumber; i += step) {
         searchPoints.push_back(points.at(i));
     }
+    spacer.reset();
     qtContainsPoint(quadTree, searchPoints);
+    int64_t spaceUsed = spacer.space_used();
+    delete quadTree;
+    return spaceUsed;
 }
 
-static void kDTreeEfficient_Contains(int pointNumber) {
+static int64_t kDTreeEfficient_Contains(int pointNumber, spacer &spacer) {
     int size = pointNumber;
-    KDTreeEfficient tree = buildEKD_Random(size);
+    KDTreeEfficient *tree = buildEKD_Random(size);
     std::vector<Point> points = getRandomPoints(size);
     std::vector<Point> searchPoints;
     int step = size / 100;
     for (int i = 0; i < pointNumber; i += step) {
         searchPoints.push_back(points.at(i));
     }
-
+    spacer.reset();
     kdEContainsPoint(tree, searchPoints);
+    int64_t spaceUsed = spacer.space_used();
+    delete tree;
+    return spaceUsed;
 }
 
-static void myKDTree_Contains(int pointNumber) {
+static int64_t myKDTree_Contains(int pointNumber, spacer &spacer) {
     int size = pointNumber;
-    MyKDTree tree = buildMyKD_Random(size);
+    MyKDTree *tree = buildMyKD_Random(size);
     std::vector<Point> points = getRandomPoints(size);
     std::vector<Point> searchPoints;
     int step = size / 100;
     for (int i = 0; i < pointNumber; i += step) {
         searchPoints.push_back(points.at(i));
     }
-
+    spacer.reset();
     myKdContainsPoint(tree, searchPoints);
-
+    int64_t spaceUsed = spacer.space_used();
+    delete tree;
+    return spaceUsed;
 }
 
-static void naive_Contains(int pointNumber) {
+static int64_t naive_Contains(int pointNumber, spacer &spacer) {
     int size = pointNumber;
     std::vector<Point> points = getRandomPoints(size);
     std::vector<Point> searchPoints;
@@ -113,14 +121,85 @@ static void naive_Contains(int pointNumber) {
     for (int i = 0; i < pointNumber; i += step) {
         searchPoints.push_back(points.at(i));
     }
+    spacer.reset();
     containsNaive(searchPoints, points);
+    int64_t spaceUsed = spacer.space_used();
+    return spaceUsed;
+}
+
+static int64_t quadTree_NNS(int pointNumber, spacer &spacer) {
+    int size = pointNumber;
+    QuadTree *quadTree = buildQuadTreeRandom(size);
+    std::vector<Point> points = getRandomPoints(size);
+    std::vector<Point> searchPoints;
+    searchPoints.reserve(size / 100);
+    int step = size / 100;
+    for (int i = 0; i < pointNumber; i += step) {
+        searchPoints.push_back(points.at(i));
+    }
+
+    Point query{0.4 * pointNumber, 0.7 * pointNumber};
+    spacer.reset();
+    vector<Point> result = quadTree->kNearestNeighbors(query, 10);
+    int64_t spaceUsed = spacer.space_used();
+    delete quadTree;
+    return spaceUsed;
+}
+
+static int64_t kDTreeEfficient_NNS(int pointNumber, spacer &spacer) {
+    int size = pointNumber;
+    KDTreeEfficient *tree = buildEKD_Random(size);
+    std::vector<Point> points = getRandomPoints(size);
+    std::vector<Point> searchPoints;
+    int step = size / 100;
+    for (int i = 0; i < pointNumber; i += step) {
+        searchPoints.push_back(points.at(i));
+    }
+    Point query{0.4 * pointNumber, 0.7 * pointNumber};
+    spacer.reset();
+    vector<Point> result = tree->kNearestNeighbors(query, 10);
+    int64_t spaceUsed = spacer.space_used();
+    delete tree;
+    return spaceUsed;
+}
+
+static int64_t myKDTree_NNS(int pointNumber, spacer &spacer) {
+    int size = pointNumber;
+    auto tree = buildMyKD_Random(size);
+    std::vector<Point> points = getRandomPoints(size);
+    std::vector<Point> searchPoints;
+    int step = size / 100;
+    for (int i = 0; i < pointNumber; i += step) {
+        searchPoints.push_back(points.at(i));
+    }
+    Point query{0.4 * pointNumber, 0.7 * pointNumber};
+    spacer.reset();
+    vector<Point> result = tree->kNearestNeighbors(query, 10);
+    int64_t spaceUsed = spacer.space_used();
+    delete tree;
+    return spaceUsed;
+}
+
+static int64_t naive_NNS(int pointNumber, spacer &spacer) {
+    int size = pointNumber;
+    std::vector<Point> points = getRandomPoints(size);
+    std::vector<Point> searchPoints;
+    int step = size / 100;
+    for (int i = 0; i < pointNumber; i += step) {
+        searchPoints.push_back(points.at(i));
+    }
+    Point query{0.4 * pointNumber, 0.7 * pointNumber};
+    spacer.reset();
+    vector<Point> result = naive_kNNS(query, points, 10);
+    int64_t spaceUsed = spacer.space_used();
+    return spaceUsed;
 }
 
 static void startBuildBenchmarks() {
     util::spacer spacer{};
     vector<string> results;
 
-    cout << "Buidl results in kBytes" << endl;
+    cout << "Build results in kBytes" << endl;
 
     for (int i = START; i < END; i *= 2) {
         vector<Point> pointVector = getRandomPoints(i);
@@ -128,13 +207,14 @@ static void startBuildBenchmarks() {
         Area area{0, bounds, 0, bounds};
 
         spacer.reset();
-        QuadTree quadTree(area, pointVector);
-        quadTree.buildTree();
+        auto quadTree = new QuadTree(area, pointVector);
+        quadTree->buildTree();
         int64_t space_in_bytes = spacer.space_used();
 
         int64_t memory = space_in_bytes / 1024;
         results.push_back("Build-Quadtree/" + to_string(i) + ": " + to_string(memory) + " kB" + " H: " +
-                          to_string(quadTree.getHeight()));
+                          to_string(quadTree->getHeight()));
+        delete quadTree;
     }
 
     results.emplace_back("----------------------------------------------------------------");
@@ -145,12 +225,13 @@ static void startBuildBenchmarks() {
         double bounds = i;
         Area area{0, bounds, 0, bounds};
         spacer.reset();
-        KDTreeEfficient kdTreeEfficient(pointVector, 0, area, 0, i);
-        kdTreeEfficient.buildTree();
+        auto kdTreeEfficient = new KDTreeEfficient(pointVector, 0, area, 0, i);
+        kdTreeEfficient->buildTree();
         int64_t space_in_bytes = spacer.space_used();
         int64_t memory = space_in_bytes / 1024;
         results.push_back("Build-KD-Efficient/" + to_string(i) + ": " + to_string(memory) + " kB" + " H: " +
-                          to_string(kdTreeEfficient.getHeight()));
+                          to_string(kdTreeEfficient->getHeight()));
+        delete kdTreeEfficient;
     }
 
     results.emplace_back("----------------------------------------------------------------");
@@ -161,12 +242,13 @@ static void startBuildBenchmarks() {
         double bounds = i;
         Area area{0, bounds, 0, bounds};
         spacer.reset();
-        MyKDTree myKdTree(pointVector, area, 0);
-        myKdTree.buildTree();
+        auto myKdTree = new MyKDTree(pointVector, area, 0);
+        myKdTree->buildTree();
         int64_t space_in_bytes = spacer.space_used();
         int64_t memory = space_in_bytes / 1024;
         results.push_back("Build-My-KDTree/" + to_string(i) + ": " + to_string(memory) + " kB. " + " H: " +
-                          to_string(myKdTree.getHeight()));
+                          to_string(myKdTree->getHeight()));
+        delete myKdTree;
     }
 
     for (const auto &record: results) {
@@ -174,7 +256,7 @@ static void startBuildBenchmarks() {
     }
 }
 
-static void startQueryBenchmarks() {
+static void queryBenchmarks() {
     util::spacer spacer{};
     vector<string> results;
 
@@ -205,10 +287,79 @@ static void startQueryBenchmarks() {
     }
 }
 
-/*int main() {
-    startQueryBenchmarks();
+static void containsBenchmarks() {
+    util::spacer spacer{};
+    vector<string> results;
+
+    cout << "Contains-Results in Bytes" << endl;
+
+    for (int i = START; i < END; i *= 2) {
+        int64_t space = quadTree_contains(i, spacer);
+        results.push_back("Quadtree-Contains/" + to_string(i) + ": " + to_string(space));
+    }
+
+    for (int i = START; i < END; i *= 2) {
+        int64_t space = kDTreeEfficient_Contains(i, spacer);
+        results.push_back("EKD-Contains/" + to_string(i) + ": " + to_string(space));
+    }
+
+    for (int i = START; i < END; i *= 2) {
+        int64_t space = myKDTree_Contains(i, spacer);
+        results.push_back("MKD-Contains/" + to_string(i) + ": " + to_string(space));
+    }
+
+    for (int i = START; i < END; i *= 2) {
+        int64_t space = naive_Contains(i, spacer);
+        results.push_back("Naive-Contains/" + to_string(i) + ": " + to_string(space));
+    }
+
+    for (const auto &record: results) {
+        cout << record << "\n";
+    }
+}
+
+static void kNNSBenchmarks() {
+    util::spacer spacer{};
+    vector<string> results;
+
+    cout << "k-NNS-Results in Bytes" << endl;
+
+    for (int i = START; i < END; i *= 2) {
+        int64_t space = quadTree_NNS(i, spacer);
+        results.push_back("Quadtree-NNS/" + to_string(i) + ": " + to_string(space));
+    }
+
+    for (int i = START; i < END; i *= 2) {
+        int64_t space = kDTreeEfficient_NNS(i, spacer);
+        results.push_back("EKD-NNS/" + to_string(i) + ": " + to_string(space));
+    }
+
+    for (int i = START; i < END; i *= 2) {
+        int64_t space = myKDTree_NNS(i, spacer);
+        results.push_back("MKD-NNS/" + to_string(i) + ": " + to_string(space));
+    }
+
+    for (int i = START; i < END; i *= 2) {
+        int64_t space = naive_NNS(i, spacer);
+        results.push_back("Naive-NNS/" + to_string(i) + ": " + to_string(space));
+    }
+
+    for (const auto &record: results) {
+        cout << record << "\n";
+    }
+}
+
+
+int main() {
+    cout << "++++++++++++++++++START CONTAINS BENCHMARKS++++++++++++++++++" << "\n";
+    containsBenchmarks();
+    cout << "++++++++++++++++++START NNS BENCHMARKS++++++++++++++++++" << "\n";
+    kNNSBenchmarks();
+    cout << "++++++++++++++++++START BUILD BENCHMARKS++++++++++++++++++" << "\n";
     startBuildBenchmarks();
+    cout << "++++++++++++++++++START QUERY BENCHMARKS++++++++++++++++++" << "\n";
+    queryBenchmarks();
     return 0;
 }
- */
+
 

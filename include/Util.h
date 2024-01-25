@@ -41,7 +41,7 @@ struct Area {
     double xMin, xMax, yMin, yMax;
 };
 
-inline Area *splitArea(Area area, double xMid, double yMid) {
+inline Area *splitArea(Area &area, double xMid, double yMid) {
     Area *areas = (Area *) std::malloc(sizeof(Area) << 2);
     areas[NORTH_EAST] = Area{xMid, area.xMax, yMid, area.yMax};
     areas[NORTH_WEST] = Area{area.xMin, xMid, yMid, area.yMax};

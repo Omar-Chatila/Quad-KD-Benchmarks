@@ -184,7 +184,8 @@ static void nnsTest() {
     vector<Point> nns2 = kdTreeEfficient.kNearestNeighbors(p, k);
     auto stop3 = std::chrono::high_resolution_clock::now();
     auto duration_us3 = std::chrono::duration_cast<std::chrono::microseconds>(stop3 - start3);
-    std::cout << "Time taken by KD-Tree_Efficient: " << duration_us3.count() << " µs - size: " << nns.size() << std::endl;
+    std::cout << "Time taken by KD-Tree_Efficient: " << duration_us3.count() << " µs - size: " << nns.size()
+              << std::endl;
 
     MyKDTree myKdTree(points, area, 0);
     myKdTree.buildTree();
@@ -193,7 +194,8 @@ static void nnsTest() {
     vector<Point> nns4 = myKdTree.kNearestNeighbors(p, k);
     auto stop4 = std::chrono::high_resolution_clock::now();
     auto duration_us4 = std::chrono::duration_cast<std::chrono::microseconds>(stop4 - start4);
-    std::cout << "Time taken by KD-Tree_Efficient: " << duration_us4.count() << " µs - size: " << nns4.size() << std::endl;
+    std::cout << "Time taken by KD-Tree_Efficient: " << duration_us4.count() << " µs - size: " << nns4.size()
+              << std::endl;
 
     auto startN = std::chrono::high_resolution_clock::now();
     vector<Point> naiveResult = naive_kNNS(p, points, k);
@@ -204,7 +206,15 @@ static void nnsTest() {
 
 int main(int argc, char *argv[]) {
     FAST_IO();
-    nnsTest();
+    Area area{0, 100, 0, 100};
+    /*vector<Point> points = getRandomPoints(100);
+    QuadTree quadTree(area, points);
+    quadTree.buildTree();
+    cout << quadTree.getHeight() << endl;*/
+    Point *pointsA = getRandomPointsArray(100);
+    auto *kdTreeEfficient = new KDTreeEfficient(pointsA, 0, area, 0, 100);
+    kdTreeEfficient->buildTree();
+    cout << kdTreeEfficient->getHeight() << endl;
     return 0;
 }
 

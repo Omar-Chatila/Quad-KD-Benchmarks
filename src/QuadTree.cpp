@@ -11,6 +11,19 @@ QuadTree::QuadTree(Area square, vector<Point> &elements) {
     this->elements = elements;
 }
 
+QuadTree::~QuadTree() {
+    deleteTree(this);
+}
+
+void QuadTree::deleteTree(QuadTree *node) {
+    if (node != nullptr) {
+        for (auto child: node->children) {
+            deleteTree(child);
+        }
+        delete node;
+    }
+}
+
 int QuadTree::getHeight() {
     if (isNodeLeaf()) {
         return 1;
@@ -183,6 +196,8 @@ std::vector<Point> QuadTree::kNearestNeighbors(Point &queryPoint, int k) {
     kNearestNeighborsHelper(this, k, queue, result);
     return result;
 }
+
+
 
 
 

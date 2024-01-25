@@ -19,9 +19,17 @@ KDTreeEfficient::KDTreeEfficient(Point *points, int level, Area &area, int from,
 }
 
 KDTreeEfficient::~KDTreeEfficient() {
+    deleteTree(this);
     free(this->points);
 }
 
+void KDTreeEfficient::deleteTree(KDTreeEfficient *node) {
+    if (node != nullptr) {
+        deleteTree(node->leftChild);
+        deleteTree(node->rightChild);
+        delete node;
+    }
+}
 
 void KDTreeEfficient::setVerticalChildren(int level) {
     int midIndex = (from + to) / 2;
@@ -163,6 +171,8 @@ void KDTreeEfficient::kNearestNeighborsHelper(KDTreeEfficient *node, int k,
         }
     }
 }
+
+
 
 
 

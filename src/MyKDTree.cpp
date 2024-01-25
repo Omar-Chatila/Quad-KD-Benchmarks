@@ -19,6 +19,19 @@ MyKDTree::MyKDTree(vector<Point> &points, Area &area, int level) {
     }
 }
 
+
+MyKDTree::~MyKDTree() {
+    deleteTree(this);
+}
+
+void MyKDTree::deleteTree(MyKDTree *node) {
+    if (node != nullptr) {
+        deleteTree(node->leftChild);
+        deleteTree(node->rightChild);
+        delete node;
+    }
+}
+
 void MyKDTree::buildTree(int lev) {
     if (this->points.size() > 1) {
         // vertical split
@@ -178,3 +191,4 @@ vector<Point> MyKDTree::kNearestNeighbors(Point &queryPoint, int k) {
     kNearestNeighborsHelper(this, k, queue, result);
     return result;
 }
+
