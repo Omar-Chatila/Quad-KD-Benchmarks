@@ -79,15 +79,18 @@ inline list<Point> getQueryNaive(vector<Point> &points, Area &queryArea) {
     return result;
 }
 
-inline void containsNaive(vector<Point> &searchPoints, vector<Point> &points) {
+inline bool containsNaive(vector<Point> &searchPoints, vector<Point> &points) {
     list<Point> result;
+    bool contains;
     for (auto searchPoint: searchPoints) {
         for (auto point: points) {
             if (point == searchPoint) {
+                contains = true;
                 break;
             }
         }
     }
+    return contains;
 }
 
 inline void qtContainsPoint(QuadTree *quadtree, vector<Point> &points) {
