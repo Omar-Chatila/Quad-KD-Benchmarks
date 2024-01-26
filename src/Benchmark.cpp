@@ -4,6 +4,7 @@
 
 #include "../include/KDTreeEfficient.h"
 #include "../include/TreeHelper.h"
+#include "../include/KDBTreeEfficient.h"
 #include "../include/QuadTree.h"
 #include "../include/Util.h"
 
@@ -15,7 +16,7 @@
 #define END 2'097'152
 #define K_START 1
 #define K_END 10'000
-#define ITERATIONS 10
+#define ITERATIONS 1
 
 using namespace std;
 
@@ -30,6 +31,21 @@ static void buildKDETree(benchmark::State &state) {
         benchmark::DoNotOptimize(kdTreeEfficient);
         kdTreeEfficient->buildTree();
         delete kdTreeEfficient;
+    }
+    state.SetComplexityN(state.range(0));
+}
+
+static void buildKDBTree(benchmark::State &state) {
+    int pointNumber = state.range(0);
+    auto *points = getRandomPointsArray(pointNumber);
+    double bounds = pointNumber;
+    Area area{0, bounds, 0, bounds};
+    int capacity = (int) max(log10(pointNumber), 4.0);
+    for (auto _: state) {
+        auto *kdbTreeEfficient = new KDBTreeEfficient(points, 0, area, 0, pointNumber, capacity);
+        benchmark::DoNotOptimize(kdbTreeEfficient);
+        kdbTreeEfficient->buildTree();
+        delete kdbTreeEfficient;
     }
     state.SetComplexityN(state.range(0));
 }
@@ -419,6 +435,8 @@ BENCHMARK(buildPRQuadTree)->Name("Build PR-Quadtree")->RangeMultiplier(2)->Range
 BENCHMARK(buildMyKDTree)->Name("Build MyKDTree")->RangeMultiplier(2)->Range(START, END)->Complexity(
         benchmark::oNLogN)->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
 BENCHMARK(buildKDETree)->Name("Build KD-Tree-Efficient")->RangeMultiplier(2)->Range(START, END)->Complexity(
+        benchmark::oNLogN)->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
+BENCHMARK(buildKDBTree)->Name("Build KDB-Tree-Efficient")->RangeMultiplier(2)->Range(START, END)->Complexity(
         benchmark::oNLogN)->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
 
 // Build dynamically
