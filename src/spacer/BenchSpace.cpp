@@ -8,7 +8,7 @@
 #include "spacer.hpp"
 
 #define START 512
-#define END 2'097'153
+#define END 33'554'432
 
 using namespace std;
 using namespace util;
@@ -17,6 +17,17 @@ using namespace util;
 static int64_t queryQuadTree(int pointNumber, spacer &spacer) {
     int size = pointNumber;
     QuadTree *quadTree = buildQuadTreeRandom(size);
+    Area bigArea{0.3 * size, 0.5 * size, 0.54 * size, 0.64 * size};
+    spacer.reset();
+    std::list result = quadTree->query(bigArea);
+    int64_t spaceUsed = spacer.space_used();
+    delete quadTree;
+    return spaceUsed;
+}
+
+static int64_t queryPrQuadTree(int pointNumber, spacer &spacer) {
+    int size = pointNumber;
+    PointRegionQuadTree *quadTree = buildPRQuadTreeRandom(size);
     Area bigArea{0.3 * size, 0.5 * size, 0.54 * size, 0.64 * size};
     spacer.reset();
     std::list result = quadTree->query(bigArea);
@@ -75,6 +86,24 @@ static int64_t quadTree_contains(int pointNumber, spacer &spacer) {
     }
     spacer.reset();
     qtContainsPoint(quadTree, searchPoints);
+    int64_t spaceUsed = spacer.space_used();
+    delete quadTree;
+    return spaceUsed;
+}
+
+static int64_t prQuadTree_contains(int pointNumber, spacer &spacer) {
+    int size = pointNumber;
+    PointRegionQuadTree *quadTree = buildPRQuadTreeRandom(size);
+    std::vector<Point> points = getRandomPoints(size);
+    std::vector<Point> searchPoints;
+    searchPoints.reserve(size / 100);
+    int step = size / 100;
+    for (int i = 0; i < pointNumber; i += step) {
+        searchPoints.push_back(points.at(i));
+    }
+    cout << "size " << searchPoints.size() << endl;
+    spacer.reset();
+    pr_qtContainsPoint(quadTree, searchPoints);
     int64_t spaceUsed = spacer.space_used();
     delete quadTree;
     return spaceUsed;
@@ -200,7 +229,7 @@ static void startBuildBenchmarks() {
 
     cout << "Build results in kBytes" << endl;
 
-    for (int i = START; i < END; i *= 2) {
+    /*for (int i = START; i < END; i *= 2) {
         vector<Point> pointVector = getRandomPoints(i);
         double bounds = i;
         Area area{0, bounds, 0, bounds};
@@ -211,9 +240,29 @@ static void startBuildBenchmarks() {
         int64_t space_in_bytes = spacer.space_used();
 
         int64_t memory = space_in_bytes / 1024;
-        results.push_back("Build-Quadtree/" + to_string(i) + ": " + to_string(memory) + " kB" + " H: " +
-                          to_string(quadTree->getHeight()));
+        cout << "Build-Quadtree/" + to_string(i) + ": " + to_string(memory) + " kB" + " H: " +
+                to_string(quadTree->getHeight()) << "\n";
         delete quadTree;
+    }
+
+    results.emplace_back("----------------------------------------------------------------");
+    spacer.reset();
+    */
+
+    for (int i = START; i < END; i *= 2) {
+        vector<Point> pointVector = getRandomPoints(i);
+        double bounds = i;
+        Area area{0, bounds, 0, bounds};
+        int capacity = (int) max(log10(i), 4.0);
+        spacer.reset();
+        auto prQuadTree = new PointRegionQuadTree(area, pointVector, capacity);
+        prQuadTree->buildTree();
+        int64_t space_in_bytes = spacer.space_used();
+
+        int64_t memory = space_in_bytes / 1024;
+        cout << ("Build-PR-Quadtree/" + to_string(i) + ": " + to_string(memory) + " kB" + " H: " +
+                 to_string(prQuadTree->getHeight())) << endl;
+        delete prQuadTree;
     }
 
     results.emplace_back("----------------------------------------------------------------");
@@ -263,26 +312,31 @@ static void queryBenchmarks() {
 
     for (int i = START; i < END; i *= 2) {
         int64_t space = queryQuadTree(i, spacer);
-        results.push_back("Quadtree-Query/" + to_string(i) + ": " + to_string(space));
+        cout << ("Quadtree-Query/" + to_string(i) + ": " + to_string(space)) << endl;
+    }
+
+    for (int i = START; i < END; i *= 2) {
+        int64_t space = queryPrQuadTree(i, spacer);
+        cout << ("PRQuadtree-Query/" + to_string(i) + ": " + to_string(space)) << endl;
     }
 
     for (int i = START; i < END; i *= 2) {
         int64_t space = queryKDETree(i, spacer);
-        results.push_back("EKD-Query/" + to_string(i) + ": " + to_string(space));
+        cout << ("EKD-Query/" + to_string(i) + ": " + to_string(space)) << endl;
     }
 
     for (int i = START; i < END; i *= 2) {
         int64_t space = queryMYKDTree(i, spacer);
-        results.push_back("MKD-Query/" + to_string(i) + ": " + to_string(space));
+        cout << ("MKD-Query/" + to_string(i) + ": " + to_string(space)) << endl;
     }
 
     for (int i = START; i < END; i *= 2) {
         int64_t space = queryNaive(i, spacer);
-        results.push_back("Naive-Query/" + to_string(i) + ": " + to_string(space));
+        cout << ("Naive-Query/" + to_string(i) + ": " + to_string(space)) << endl;
     }
 
     for (const auto &record: results) {
-        cout << record << "\n";
+        // cout << record << "\n";
     }
 }
 
@@ -291,22 +345,28 @@ static void containsBenchmarks() {
     vector<string> results;
     for (int i = START; i < END; i *= 2) {
         int64_t space = quadTree_contains(i, spacer);
-        results.push_back("Quadtree-Contains/" + to_string(i) + ": " + to_string(space));
+        cout << ("Quadtree-Contains/" + to_string(i) + ": " + to_string(space)) << endl;
     }
+
+    for (int i = START; i < END; i *= 2) {
+        int64_t space = prQuadTree_contains(i, spacer);
+        cout << ("PR-Quadtree-Contains/" + to_string(i) + ": " + to_string(space)) << endl;
+    }
+
     for (int i = START; i < END; i *= 2) {
         int64_t space = kDTreeEfficient_Contains(i, spacer);
-        results.push_back("EKD-Contains/" + to_string(i) + ": " + to_string(space));
+        cout << ("EKD-Contains/" + to_string(i) + ": " + to_string(space)) << endl;
     }
     for (int i = START; i < END; i *= 2) {
         int64_t space = myKDTree_Contains(i, spacer);
-        results.push_back("MKD-Contains/" + to_string(i) + ": " + to_string(space));
+        cout << ("MKD-Contains/" + to_string(i) + ": " + to_string(space)) << endl;
     }
     for (int i = START; i < END; i *= 2) {
         int64_t space = naive_Contains(i, spacer);
-        results.push_back("Naive-Contains/" + to_string(i) + ": " + to_string(space));
+        cout << ("Naive-Contains/" + to_string(i) + ": " + to_string(space)) << endl;
     }
     for (const auto &record: results) {
-        cout << record << "\n";
+        // cout << record << "\n";
     }
 }
 
@@ -342,14 +402,16 @@ static void kNNSBenchmarks() {
 }
 
 int main() {
-    cout << "++++++++++++++++++START CONTAINS BENCHMARKS++++++++++++++++++" << "\n";
-    containsBenchmarks();
+    /*cout << "++++++++++++++++++START BUILD BENCHMARKS++++++++++++++++++" << "\n";
+    startBuildBenchmarks();
+
     cout << "++++++++++++++++++START NNS BENCHMARKS++++++++++++++++++" << "\n";
     kNNSBenchmarks();
-    cout << "++++++++++++++++++START BUILD BENCHMARKS++++++++++++++++++" << "\n";
-    startBuildBenchmarks();
     cout << "++++++++++++++++++START QUERY BENCHMARKS++++++++++++++++++" << "\n";
     queryBenchmarks();
+    */
+    cout << "++++++++++++++++++START CONTAINS BENCHMARKS++++++++++++++++++" << "\n";
+    containsBenchmarks();
     return 0;
 }
 

@@ -28,7 +28,6 @@ void KDBTreeEfficient::setVerticalChildren(int level) {
     int midIndex = (from + to) / 2;
     Area leftArea = Area{this->area.xMin, this->xMedian, this->area.yMin, this->area.yMax};
     Area rightArea = Area{this->xMedian, this->area.xMax, this->area.yMin, this->area.yMax};
-
     this->leftChild = new KDBTreeEfficient(this->points, level + 1, leftArea, from, midIndex, capacity);
     this->rightChild = new KDBTreeEfficient(this->points, level + 1, rightArea, midIndex + 1, to, capacity);
 }
@@ -72,7 +71,7 @@ bool KDBTreeEfficient::contains(Point point) {
         }
         level++;
     }
-    for (int i = 0; i < capacity; i++) {
+    for (int i = current->from; i <= current->to; i++) {
         if (current->points[i] == point) return true;
     }
     return false;

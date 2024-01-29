@@ -39,8 +39,6 @@ private:
     KDBTreeEfficient *rightChild{};
     double xMedian, yMedian;
 
-    void deleteTree(KDBTreeEfficient *node);
-
     void buildTree(int level);
 
     void setVerticalChildren(int level);
