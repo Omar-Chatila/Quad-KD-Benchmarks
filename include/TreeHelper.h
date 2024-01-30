@@ -1,5 +1,5 @@
 //
-// Created by omarc on 13/01/2024.
+// Created by Omar Chatila on 13/01/2024.
 //
 
 #pragma once
@@ -13,6 +13,7 @@
 #include "Util.h"
 #include "MyKDTree.h"
 #include "PointRegionQuadTree.h"
+#include "KDBTreeEfficient.h"
 
 using namespace std;
 
@@ -44,9 +45,9 @@ inline KDBTreeEfficient *buildKDB_Random(int pointNumber) {
     Area area{0, bounds, 0, bounds};
     int start = 0;
     int capacity = (int) max(log10(pointNumber), 4.0);
-    auto *kdTreeEfficient = new KDBTreeEfficient(pointArray, 0, area, start, size, capacity);
-    kdTreeEfficient->buildTree();
-    return kdTreeEfficient;
+    auto *kdbTreeEfficient = new KDBTreeEfficient(pointArray, 0, area, start, size, capacity);
+    kdbTreeEfficient->buildTree();
+    return kdbTreeEfficient;
 }
 
 inline QuadTree *buildQuadTreeRandom(int pointNumber) {
@@ -68,11 +69,11 @@ inline PointRegionQuadTree *buildPRQuadTreeRandom(int pointNumber) {
     return quadTree;
 }
 
-inline list<Point> testQuery(KDTreeEfficient &kdTreeEfficient) {
+inline list<Point> testQuery(KDTreeEfficient *kdTreeEfficient) {
     Area queryArea{234, 7000, 2000, 9000};
     struct timespec start{}, now{};
     clock_gettime(CLOCK_MONOTONIC, &start);
-    list<Point> result = kdTreeEfficient.query(queryArea);
+    list<Point> result = kdTreeEfficient->query(queryArea);
     clock_gettime(CLOCK_MONOTONIC, &now);
     printf("Elapsed: %lf seconds\n", (now.tv_sec - start.tv_sec) + 1e-9 * (now.tv_nsec - start.tv_nsec));
     return result;
@@ -134,7 +135,6 @@ inline void kdbContainsPoint(KDBTreeEfficient *kdTreeEfficient, vector<Point> &p
         kdTreeEfficient->contains(point);
     }
 }
-
 
 inline void myKdContainsPoint(MyKDTree *tree, vector<Point> &points) {
     for (auto point: points) {

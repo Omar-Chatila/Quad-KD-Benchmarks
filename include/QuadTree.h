@@ -32,13 +32,15 @@ private:
     Area square{};
     vector<Point> elements;
 
-    void deleteTree(QuadTree *node);
-
-    static QuadTree *locateQuadrant(double pointX, double pointY, QuadTree *current);
-
     void kNearestNeighborsHelper(QuadTree *node, int k,
                                  priority_queue<QuadTree *, std::vector<QuadTree *>, CompareQuadTree> &queue,
                                  std::vector<Point> &result);
+
+    static int determineQuadrant(const Point &point, double xMid, double yMid);
+
+    static QuadTree *locateQuadrant(Point &point, QuadTree *current);
+
+    void partition();
 
 public:
 
@@ -51,8 +53,6 @@ public:
     bool isPointLeaf();
 
     int getHeight();
-
-    void partition();
 
     void buildTree();
 
@@ -73,6 +73,8 @@ public:
     QuadTree *getSouthEast();
 
     vector<Point> kNearestNeighbors(Point &queryPoint, int k);
+
+
 };
 
 
