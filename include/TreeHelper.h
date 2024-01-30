@@ -8,6 +8,7 @@
 #include <fstream>
 #include <sstream>
 #include "KDTreeEfficient.h"
+#include "KDBTreeEfficient.h"
 #include "QuadTree.h"
 #include "Util.h"
 #include "MyKDTree.h"
@@ -27,6 +28,23 @@ inline KDTreeEfficient *buildEKD_Random(int pointNumber) {
     Area area{0, bounds, 0, bounds};
     int start = 0;
     auto *kdTreeEfficient = new KDTreeEfficient(pointArray, 0, area, start, size);
+    kdTreeEfficient->buildTree();
+    return kdTreeEfficient;
+}
+
+inline KDBTreeEfficient *buildKDB_Random(int pointNumber) {
+    int size = pointNumber - 1;
+    auto *pointArray = (Point *) malloc(pointNumber * sizeof(Point));
+    std::vector<Point> points = getRandomPoints(pointNumber);
+    int i = 0;
+    for (auto point: points) {
+        pointArray[i++] = point;
+    }
+    double bounds = pointNumber;
+    Area area{0, bounds, 0, bounds};
+    int start = 0;
+    int capacity = (int) max(log10(pointNumber), 4.0);
+    auto *kdTreeEfficient = new KDBTreeEfficient(pointArray, 0, area, start, size, capacity);
     kdTreeEfficient->buildTree();
     return kdTreeEfficient;
 }
@@ -110,6 +128,13 @@ inline void kdEContainsPoint(KDTreeEfficient *kdTreeEfficient, vector<Point> &po
         kdTreeEfficient->contains(point);
     }
 }
+
+inline void kdbContainsPoint(KDBTreeEfficient *kdTreeEfficient, vector<Point> &points) {
+    for (auto point: points) {
+        kdTreeEfficient->contains(point);
+    }
+}
+
 
 inline void myKdContainsPoint(MyKDTree *tree, vector<Point> &points) {
     for (auto point: points) {

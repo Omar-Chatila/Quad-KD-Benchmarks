@@ -131,6 +131,7 @@ void MyKDTree::add(Point &point) {
     int lev = 0;
     while (!current->isLeaf()) {
         if ((lev++ % 2) == 0) {
+            cout << "here" << endl;
             if (point.x <= getMedian(current->points, true)) {
                 current = current->leftChild;
             } else {

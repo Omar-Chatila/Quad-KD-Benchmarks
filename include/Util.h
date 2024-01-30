@@ -10,6 +10,8 @@
 #include <fstream>
 #include <sstream>
 #include <random>
+#include <set>
+#include <unordered_set>
 #include "algorithm"
 
 
@@ -31,6 +33,16 @@ struct Point {
         return x == other.x && y == other.y;
     }
 };
+
+namespace std {
+    template<>
+    struct hash<Point> {
+        size_t operator()(const Point &p) const {
+            // Combine the hashes of x and y to generate a unique hash for the point
+            return hash<double>()(p.x) ^ (hash<double>()(p.y) << 1);
+        }
+    };
+}
 
 struct Area {
     friend std::ostream &operator<<(std::ostream &os, const Area &area) {
@@ -186,6 +198,28 @@ inline vector<Point> getRandomPoints(int pointNumber) {
     return points;
 }
 
+inline vector<Point> getDensePoints(int pointNumber) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<double> dis(0, 1000);
+
+    vector<Point> points;
+    points.reserve(pointNumber);
+    std::unordered_set<Point> generatedPoints;
+    for (int i = 0; i < pointNumber;) {
+        double x = dis(gen);
+        double y = dis(gen);
+        Point newPoint{x, y};
+        if (generatedPoints.find({x, y}) == generatedPoints.end()) {
+            points.push_back(newPoint);
+            generatedPoints.insert({x, y});
+            i++;
+        }
+    }
+    cout << "Size: " << points.size() << endl;
+    return points;
+}
+
 inline Point *getRandomPointsArray(int pointNumber) {
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -198,6 +232,28 @@ inline Point *getRandomPointsArray(int pointNumber) {
         double y = dis(gen);
         Point newPoint{x, y};
         points[i] = newPoint;
+    }
+    return points;
+}
+
+
+inline Point *getDensePointsArray(int pointNumber) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<double> dis(0, 1000);
+
+    auto *points = (Point *) malloc(pointNumber * sizeof(Point));
+    std::unordered_set<Point> generatedPoints;
+
+    for (int i = 0; i < pointNumber;) {
+        double x = dis(gen);
+        double y = dis(gen);
+        Point newPoint{x, y};
+        if (generatedPoints.find({x, y}) == generatedPoints.end()) {
+            points[i] = newPoint;
+            generatedPoints.insert({x, y});
+            i++;
+        }
     }
     return points;
 }
