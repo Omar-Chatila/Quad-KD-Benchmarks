@@ -2,9 +2,9 @@
 // Created by omarc on 12/01/2024.
 //
 
-#include "../include/MyKDTree.h"
+#include "../include/SortKDTree.h"
 
-MyKDTree::MyKDTree(vector<Point> &points, Area &area, int level) {
+SortKDTree::SortKDTree(vector<Point> &points, Area &area, int level) {
     this->points = points;
     this->area = area;
     this->level = level;
@@ -20,21 +20,14 @@ MyKDTree::MyKDTree(vector<Point> &points, Area &area, int level) {
 }
 
 
-MyKDTree::~MyKDTree() {
+SortKDTree::~SortKDTree() {
     this->points.clear();
-    delete leftChild;
-    delete rightChild;
+    delete this->leftChild;
+    delete this->rightChild;
 }
 
-void MyKDTree::deleteTree(MyKDTree *node) {
-    if (node != nullptr) {
-        deleteTree(node->leftChild);
-        deleteTree(node->rightChild);
-        delete node;
-    }
-}
 
-void MyKDTree::buildTree(int lev) {
+void SortKDTree::buildTree(int lev) {
     if (this->points.size() > 1) {
         // vertical split
         if (lev % 2 == 0) {
@@ -48,28 +41,28 @@ void MyKDTree::buildTree(int lev) {
     }
 }
 
-void MyKDTree::buildTree() {
+void SortKDTree::buildTree() {
     buildTree(0);
 }
 
-void MyKDTree::setVerticalChildren(int lev) {
+void SortKDTree::setVerticalChildren(int lev) {
     std::vector<std::vector<Point>> splitVectors = splitVector(points);
     Area leftArea = Area{this->area.xMin, getMedian(points, true), this->area.yMin, this->area.yMax};
-    this->leftChild = new MyKDTree(splitVectors[0], leftArea, lev + 1);
+    this->leftChild = new SortKDTree(splitVectors[0], leftArea, lev + 1);
     Area rightArea = Area{getMedian(points, true), this->area.xMax, this->area.yMin, this->area.yMax};
-    this->rightChild = new MyKDTree(splitVectors[1], rightArea, lev + 1);
+    this->rightChild = new SortKDTree(splitVectors[1], rightArea, lev + 1);
 }
 
-void MyKDTree::setHorizontalChildren(int lev) {
+void SortKDTree::setHorizontalChildren(int lev) {
     std::vector<std::vector<Point>> splitVectors = splitVector(points);
     Area lowerArea = Area{this->area.xMin, this->area.xMax, this->area.yMin, getMedian(points, false)};
-    this->leftChild = new MyKDTree(splitVectors[0], lowerArea, lev + 1);
+    this->leftChild = new SortKDTree(splitVectors[0], lowerArea, lev + 1);
     Area higherArea = Area{this->area.xMin, this->area.xMax, getMedian(points, false), this->area.yMax};
-    this->rightChild = new MyKDTree(splitVectors[1], higherArea, lev + 1);
+    this->rightChild = new SortKDTree(splitVectors[1], higherArea, lev + 1);
 }
 
-bool MyKDTree::contains(Point point) {
-    MyKDTree *current = this;
+bool SortKDTree::contains(Point point) {
+    SortKDTree *current = this;
     while (!current->isLeaf()) {
         if (current->level % 2 == 0) {
             current = getMedian(current->points, true) >= point.x ? current->leftChild : current->rightChild;
@@ -80,7 +73,7 @@ bool MyKDTree::contains(Point point) {
     return std::find(current->points.begin(), current->points.end(), point) != current->points.end();
 }
 
-list<Point> MyKDTree::query(Area &queryRectangle) {
+list<Point> SortKDTree::query(Area &queryRectangle) {
     list<Point> result;
     if (this->isLeaf()) {
         if (containsPoint(queryRectangle, this->points[0])) {
@@ -102,7 +95,7 @@ list<Point> MyKDTree::query(Area &queryRectangle) {
     return result;
 }
 
-int MyKDTree::getHeight() {
+int SortKDTree::getHeight() {
     if (isLeaf()) {
         return 1;
     }
@@ -118,27 +111,24 @@ int MyKDTree::getHeight() {
     }
 }
 
-bool MyKDTree::isLeaf() {
+bool SortKDTree::isLeaf() {
     return this->points.size() == 1;
 }
 
-bool MyKDTree::isEmpty() {
-    return this->points.empty();
-}
-
-void MyKDTree::add(Point &point) {
-    MyKDTree *current = this;
+void SortKDTree::add(Point &point) {
+    SortKDTree *current = this;
     int lev = 0;
     while (!current->isLeaf()) {
         if ((lev++ % 2) == 0) {
-            cout << "here" << endl;
-            if (point.x <= getMedian(current->points, true)) {
+            // check X-coordinate
+            if (point.x <= (current->area.xMin + current->area.xMax) / 2.0) {
                 current = current->leftChild;
             } else {
                 current = current->rightChild;
             }
+            // check y-coordinate
         } else {
-            if (point.y <= getMedian(current->points, false)) {
+            if (point.y <= (current->area.yMin + current->area.yMax) / 2.0) {
                 current = current->leftChild;
             } else {
                 current = current->rightChild;
@@ -153,16 +143,16 @@ void MyKDTree::add(Point &point) {
     }
 }
 
-void MyKDTree::appendPoint(Point &point, int lev) {
+void SortKDTree::appendPoint(Point &point, int lev) {
     points.push_back(point);
     if ((lev % 2 == 0 && points[0].x > point.x) || (lev % 2 != 0 && points[0].y > point.y)) {
         swap(points[0], point);
     }
 }
 
-void MyKDTree::kNearestNeighborsHelper(MyKDTree *node, int k,
-                                       priority_queue<MyKDTree *, std::vector<MyKDTree *>, CompareMKDTree> &queue,
-                                       vector<Point> &result) {
+void SortKDTree::kNearestNeighborsHelper(SortKDTree *node, int k,
+                                         priority_queue<SortKDTree *, std::vector<SortKDTree *>, CompareMKDTree> &queue,
+                                         vector<Point> &result) {
     if (node == nullptr) {
         return;
     }
@@ -175,7 +165,7 @@ void MyKDTree::kNearestNeighborsHelper(MyKDTree *node, int k,
     }
 
     while (!queue.empty() && result.size() < k) {
-        MyKDTree *current = queue.top();
+        SortKDTree *current = queue.top();
         queue.pop();
 
         if (current->isLeaf()) {
@@ -186,11 +176,11 @@ void MyKDTree::kNearestNeighborsHelper(MyKDTree *node, int k,
     }
 }
 
-vector<Point> MyKDTree::kNearestNeighbors(Point &queryPoint, int k) {
+vector<Point> SortKDTree::kNearestNeighbors(Point &queryPoint, int k) {
     vector<Point> result;
     result.reserve(k);
     CompareMKDTree compareFunction(queryPoint);
-    std::priority_queue<MyKDTree *, vector<MyKDTree *>, CompareMKDTree> queue(compareFunction);
+    std::priority_queue<SortKDTree *, vector<SortKDTree *>, CompareMKDTree> queue(compareFunction);
     kNearestNeighborsHelper(this, k, queue, result);
     return result;
 }

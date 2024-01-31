@@ -14,7 +14,7 @@ PointRegionQuadTree::PointRegionQuadTree(Area square, vector<Point> &elements, i
 
 PointRegionQuadTree::~PointRegionQuadTree() {
     this->elements.clear();
-    for (auto & i : children) {
+    for (auto &i: children) {
         delete i;
     }
 }
@@ -37,7 +37,7 @@ bool PointRegionQuadTree::isNodeLeaf() {
 
 void PointRegionQuadTree::buildTree() {
     if (this->elements.size() > capacity) {
-        partition();
+        subdivide();
         children[NORTH_EAST]->buildTree();
         children[NORTH_WEST]->buildTree();
         children[SOUTH_WEST]->buildTree();
@@ -45,7 +45,7 @@ void PointRegionQuadTree::buildTree() {
     }
 }
 
-void PointRegionQuadTree::partition() {
+void PointRegionQuadTree::subdivide() {
     double xMid = (this->square.xMin + this->square.xMax) / 2.0;
     double yMid = (this->square.yMin + this->square.yMax) / 2.0;
     Area *quadrants = splitArea(this->square, xMid, yMid);
@@ -138,24 +138,8 @@ void PointRegionQuadTree::add(Point &point) {
     current->elements.push_back(point);
 
     if (current->elements.size() > capacity) {
-        current->partition();
+        current->subdivide();
     }
-}
-
-PointRegionQuadTree *PointRegionQuadTree::getNorthEast() {
-    return this->children[NORTH_EAST];
-}
-
-PointRegionQuadTree *PointRegionQuadTree::getNorthWest() {
-    return this->children[NORTH_WEST];
-}
-
-PointRegionQuadTree *PointRegionQuadTree::getSouthWest() {
-    return this->children[SOUTH_WEST];
-}
-
-PointRegionQuadTree *PointRegionQuadTree::getSouthEast() {
-    return this->children[SOUTH_EAST];
 }
 
 void PointRegionQuadTree::kNearestNeighborsHelper(PointRegionQuadTree *node, int k,

@@ -1,6 +1,8 @@
-//
-// Created by omarc on 12/01/2024.
-//
+/**
+ * @author Omar Chatila
+ * @file Util.h
+ * @brief Various utility functions and structs
+ */
 
 #pragma once
 
@@ -22,21 +24,44 @@ enum Quadrant {
     SOUTH_WEST, SOUTH_EAST
 };
 
+/**
+ * @brief A struct representing a 2D point with x and y coordinates.
+ */
 struct Point {
-    double x, y;
+    double x; /**< The x-coordinate of the point. */
+    double y; /**< The y-coordinate of the point. */
 
+    /**
+     * @brief Overloaded << operator to stream the Point information.
+     * @param os The output stream.
+     * @param point The Point instance to be streamed.
+     * @return The output stream.
+     */
     friend std::ostream &operator<<(std::ostream &os, const Point &point) {
         return os << "[" << (point.x) << ":" << (point.y) << "]";
     }
 
+    /**
+     * @brief Overloaded == operator to check if two points are equal.
+     * @param other The other Point to compare with.
+     * @return True if the x and y coordinates of the points are equal; false otherwise.
+     */
     bool operator==(const Point &other) const {
         return x == other.x && y == other.y;
     }
 };
 
 namespace std {
+    /**
+     * @brief Hash specialization for the Point struct.
+     */
     template<>
     struct hash<Point> {
+        /**
+         * @brief Operator to generate a unique hash for a Point.
+         * @param p The Point for which the hash is generated.
+         * @return The hash value.
+         */
         size_t operator()(const Point &p) const {
             // Combine the hashes of x and y to generate a unique hash for the point
             return hash<double>()(p.x) ^ (hash<double>()(p.y) << 1);
@@ -44,6 +69,9 @@ namespace std {
     };
 }
 
+/**
+ * Area struct for Quadtree squares and KD-Tree rectangles
+ */
 struct Area {
     friend std::ostream &operator<<(std::ostream &os, const Area &area) {
         return os << "[" << (area.xMin) << ":" << (area.xMax) << "] : ["
@@ -53,6 +81,13 @@ struct Area {
     double xMin, xMax, yMin, yMax;
 };
 
+/**
+ * @brief splits area into 4 quadrants and returns them
+ * @param area Area to be split
+ * @param xMid mid x-coordinate
+ * @param yMid mid y-coordinate
+ * @return array of the 4 quadrants
+ */
 inline Area *splitArea(Area &area, double xMid, double yMid) {
     Area *areas = (Area *) std::malloc(sizeof(Area) << 2);
     areas[NORTH_EAST] = Area{xMid, area.xMax, yMid, area.yMax};
@@ -62,88 +97,50 @@ inline Area *splitArea(Area &area, double xMid, double yMid) {
     return areas;
 }
 
+/**
+ * @brief Checks if two areas intersect each other
+ *
+ * Note: also returns true if borders overlap but interception area is 0
+ *
+ * @param first  area
+ * @param other  area
+ * @return true if they intersect each other, otherwise false
+ */
 inline bool intersects(Area &first, Area &other) {
     return first.xMin <= other.xMax && first.xMax >= other.xMin && first.yMax >= other.yMin && first.yMin <= other.yMax;
 }
 
-inline bool containsArea(Area &first, Area &other) {
-    return first.xMin <= other.xMin && first.xMax >= other.xMax && first.yMin <= other.yMin && first.yMax >= other.yMax;
+/**
+ * @brief Checks if first area intersects the second
+ * @param container Area possibly containing contained
+ * @param contained Area possibly contained by container
+ * @return True if container contains contained, false otherwise
+ */
+inline bool containsArea(Area &container, Area &contained) {
+    return container.xMin <= contained.xMin && container.xMax >= contained.xMax && container.yMin <= contained.yMin &&
+           container.yMax >= contained.yMax;
 }
 
+/**
+ * @brief Checks if area contains point
+ * @param area
+ * @param point
+ * @return true if area contains point, otherwise false
+ */
 inline bool containsPoint(Area &area, Point &point) {
     return (point.x >= area.xMin && point.y >= area.yMin && point.x <= area.xMax && point.y <= area.yMax);
 }
 
-inline int getRandom(int low, int high) {
-    return rand() % (high - low) + low;
-}
-
-inline double medianOfThree(double a, double b, double c) {
-    return max(min(a, b), min(max(a, b), c));
-}
-
-
-inline int partition(Point *points, int left, int right, bool x) {
-    int randIndex1 = getRandom(left, right);
-    int randIndex2 = getRandom(left, right);
-    int randIndex3 = getRandom(left, right);
-
-    // Find the median of three values at the randomly selected indices
-    double pivot = medianOfThree(x ? points[randIndex1].x : points[randIndex1].y,
-                                 x ? points[randIndex2].x : points[randIndex2].y,
-                                 x ? points[randIndex3].x : points[randIndex3].y);
-
-    int position = left;
-    for (int i = left + 1; i <= right; i++) {
-        if ((x ? points[i].x : points[i].y) <= pivot) {
-            position++;
-            swap(points[i], points[position]);
-        }
-    }
-    swap(points[left], points[position]);
-    return position;
-}
-
-inline double quickSelect(Point *points, int pos, int left, int right, bool x) {
-    if (left == right && left == pos) {
-        return x ? points[left].x : points[left].y;
-    }
-    int posRes = partition(points, left, right, x);
-    if (posRes == pos) {
-        return x ? points[posRes].x : points[posRes].y;
-    } else if (posRes < pos) {
-        return quickSelect(points, pos, posRes + 1, right, x);
-    } else {
-        return quickSelect(points, pos, left, posRes - 1, x);
-    }
-}
-
-// Implementation of QuickSelect
-inline double kthSmallest(Point *a, int left, int right, int k, bool x) {
-
-    while (left <= right) {
-
-        // Partition a[left..right] around a pivot
-        // and find the position of the pivot
-        int pivotIndex = partition(a, left, right, x);
-
-        // If pivot itself is the k-th smallest element
-        if (pivotIndex == k - 1)
-            return x ? a[pivotIndex].x : a[pivotIndex].y;
-
-            // If there are more than k-1 elements on
-            // left of pivot, then k-th smallest must be
-            // on left side.
-        else if (pivotIndex > k - 1)
-            right = pivotIndex - 1;
-
-            // Else k-th smallest is on right side.
-        else
-            left = pivotIndex + 1;
-    }
-    return -1;
-}
-
+/**
+ * @brief returns median of a points array based on coordinate within specified bounds
+ * returns median and rearranges array such that points larger than median right
+ * and points lower are left of median index
+ * @param points array of points objects
+ * @param x true if median by x-coordinates, otherwise y-coordinates
+ * @param left index: left bound of array
+ * @param right index: right bound of array
+ * @return median of specified coordinate
+ */
 inline double median(Point *points, bool x, int left, int right) {
     int size = right - left;
     int pos = left + size / 2;
@@ -155,7 +152,11 @@ inline double median(Point *points, bool x, int left, int right) {
     return x ? points[pos].x : points[pos].y;
 }
 
-
+/**
+ * @brief splits vector in half and returns two halves
+ * @param originalVector vector to be split
+ * @return vector containing the two split vectors
+ */
 inline vector<vector<Point>> splitVector(vector<Point> &originalVector) {
     long long midIndex = static_cast<long long>(originalVector.size()) / 2;
 
@@ -165,6 +166,12 @@ inline vector<vector<Point>> splitVector(vector<Point> &originalVector) {
     return {subVector1, subVector2};
 }
 
+/**
+ * @brief Returns value of Point in the middle of the list
+ * @param list pointlist
+ * @param x true if x-coordinate is required, otherwise false
+ * @return value of middle point
+ */
 inline double getMedian(vector<Point> &list, bool x) {
     if (x) {
         if (list.size() > 1) {
@@ -183,6 +190,11 @@ inline double getMedian(vector<Point> &list, bool x) {
     }
 }
 
+/**
+ * @brief Creates vector with uniformly distributed random points and proportionally large bounds
+ * @param pointNumber Number of points to be created
+ * @return vector with random points
+ */
 inline vector<Point> getRandomPoints(int pointNumber) {
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -198,6 +210,12 @@ inline vector<Point> getRandomPoints(int pointNumber) {
     return points;
 }
 
+/**
+ * @brief Creates vector with uniformly distributed random points in an area of constant size
+ * the higher the point number the higher the density
+ * @param pointNumber number of points
+ * @return vector with random points
+ */
 inline vector<Point> getDensePoints(int pointNumber) {
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -220,6 +238,12 @@ inline vector<Point> getDensePoints(int pointNumber) {
     return points;
 }
 
+/**
+ * @brief Creates array with uniformly distributed random points in an area of constant size
+ * the higher the point number the higher the density
+ * @param pointNumber number of points
+ * @return array with random points
+ */
 inline Point *getRandomPointsArray(int pointNumber) {
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -236,7 +260,14 @@ inline Point *getRandomPointsArray(int pointNumber) {
     return points;
 }
 
-
+/**
+ * @brief Creates array with uniformly distributed random points in an area of constant size
+ *
+ * Area with bounds [0:1000] x [0:1000]. The higher the point number the higher the density
+ *
+ * @param pointNumber number of points
+ * @return array with random points
+ */
 inline Point *getDensePointsArray(int pointNumber) {
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -258,6 +289,11 @@ inline Point *getDensePointsArray(int pointNumber) {
     return points;
 }
 
+/**
+ * @brief Creates random point within [0:bounds] x [0:bounds]
+ * @param bounds highest x/y coordinate of point
+ * @return point
+ */
 inline Point getRandomPoint(int bounds) {
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -265,12 +301,24 @@ inline Point getRandomPoint(int bounds) {
     return {dis(gen), dis(gen)};
 }
 
+/**
+ * Calculates distance between area and point
+ * @param area for distance calculation
+ * @param point for distance calculation
+ * @return distance between area an point
+ */
 inline double sqDistanceFrom(const Area &area, const Point &point) {
     double dx = max(max(area.xMin - point.x, 0.0), point.x - area.xMax);
     double dy = max(max(area.yMin - point.y, 0.0), point.y - area.yMax);
     return dx * dx + dy * dy;
 }
 
+/**
+ * Calculates squared distance between two points
+ * @param p1 first point
+ * @param p2 second point
+ * @return squared distance
+ */
 inline double pointDistance(const Point &p1, const Point &p2) {
     return (p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y);
 }

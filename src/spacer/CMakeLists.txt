@@ -4,9 +4,10 @@ project(MyProject)
 # Add source files
 set(SOURCES
         BenchSpace.cpp
-        ../MyKDTree.cpp
+        ../SortKDTree.cpp
         ../KDTreeEfficient.cpp
         ../QuadTree.cpp
+        ../PointRegionQuadTree.cpp
         malloc_count.c
 )
 

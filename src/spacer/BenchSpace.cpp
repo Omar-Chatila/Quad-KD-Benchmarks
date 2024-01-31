@@ -52,7 +52,7 @@ static int64_t queryKDETree(int pointNumber, spacer &spacer) {
 
 static int64_t queryMYKDTree(int pointNumber, spacer &spacer) {
     int size = pointNumber;
-    auto myKdTree = buildMyKD_Random(size);
+    auto myKdTree = buildSortKDTreeRandom(size);
     Area bigArea{0.3 * size, 0.5 * size, 0.54 * size, 0.64 * size};
     spacer.reset();
     myKdTree->query(bigArea);
@@ -127,7 +127,7 @@ static int64_t kDTreeEfficient_Contains(int pointNumber, spacer &spacer) {
 
 static int64_t myKDTree_Contains(int pointNumber, spacer &spacer) {
     int size = pointNumber;
-    MyKDTree *tree = buildMyKD_Random(size);
+    SortKDTree *tree = buildSortKDTreeRandom(size);
     std::vector<Point> points = getRandomPoints(size);
     std::vector<Point> searchPoints;
     int step = size / 100;
@@ -135,7 +135,7 @@ static int64_t myKDTree_Contains(int pointNumber, spacer &spacer) {
         searchPoints.push_back(points.at(i));
     }
     spacer.reset();
-    myKdContainsPoint(tree, searchPoints);
+    sKDContainsPoint(tree, searchPoints);
     int64_t spaceUsed = spacer.space_used();
     delete tree;
     return spaceUsed;
@@ -193,7 +193,7 @@ static int64_t kDTreeEfficient_NNS(int pointNumber, spacer &spacer) {
 
 static int64_t myKDTree_NNS(int pointNumber, spacer &spacer) {
     int size = pointNumber;
-    auto tree = buildMyKD_Random(size);
+    auto tree = buildSortKDTreeRandom(size);
     std::vector<Point> points = getRandomPoints(size);
     std::vector<Point> searchPoints;
     int step = size / 100;
@@ -290,7 +290,7 @@ static void startBuildBenchmarks() {
         double bounds = i;
         Area area{0, bounds, 0, bounds};
         spacer.reset();
-        auto myKdTree = new MyKDTree(pointVector, area, 0);
+        auto myKdTree = new SortKDTree(pointVector, area, 0);
         myKdTree->buildTree();
         int64_t space_in_bytes = spacer.space_used();
         int64_t memory = space_in_bytes / 1024;
@@ -401,6 +401,7 @@ static void kNNSBenchmarks() {
     }
 }
 
+/*
 int main() {
     /*cout << "++++++++++++++++++START BUILD BENCHMARKS++++++++++++++++++" << "\n";
     startBuildBenchmarks();
@@ -409,10 +410,11 @@ int main() {
     kNNSBenchmarks();
     cout << "++++++++++++++++++START QUERY BENCHMARKS++++++++++++++++++" << "\n";
     queryBenchmarks();
-    */
+
     cout << "++++++++++++++++++START CONTAINS BENCHMARKS++++++++++++++++++" << "\n";
     containsBenchmarks();
     return 0;
 }
+*/
 
 

@@ -19,8 +19,8 @@ add_executable(QuadKDBench src/main.cpp
         include/Util.h
         src/KDTreeEfficient.cpp
         include/KDTreeEfficient.h
-        src/MyKDTree.cpp
-        include/MyKDTree.h
+        src/SortKDTree.cpp
+        include/SortKDTree.h
         include/TreeHelper.h
         $<TARGET_OBJECTS:malloc_count>
         include/PointRegionQuadTree.h

@@ -23,14 +23,6 @@ KDTreeEfficient::~KDTreeEfficient() {
     delete rightChild;
 }
 
-void KDTreeEfficient::deleteTree(KDTreeEfficient *node) {
-    if (node != nullptr) {
-        deleteTree(node->leftChild);
-        deleteTree(node->rightChild);
-        delete node;
-    }
-}
-
 void KDTreeEfficient::setVerticalChildren(int level) {
     int midIndex = (from + to) / 2;
     Area leftArea = Area{this->area.xMin, this->xMedian, this->area.yMin, this->area.yMax};
@@ -123,18 +115,6 @@ std::list<Point> KDTreeEfficient::query(Area queryRectangle) {
         childResult.insert(result.end(), childResult.begin(), childResult.end());
     }
     return result;
-}
-
-KDTreeEfficient *KDTreeEfficient::getLeftChild() {
-    return this->leftChild;
-}
-
-KDTreeEfficient *KDTreeEfficient::getRightChild() {
-    return this->rightChild;
-}
-
-Point *KDTreeEfficient::getPoints() {
-    return this->points;
 }
 
 vector<Point> KDTreeEfficient::kNearestNeighbors(Point &queryPoint, int k) {

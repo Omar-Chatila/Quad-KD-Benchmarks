@@ -7,13 +7,11 @@
 #include "../include/TreeHelper.h"
 #include "../benchmark/include/benchmark/benchmark.h"
 #include "cmath"
-#include "../include/TreeHelper.h"
 
 #define START 512
 #define END 33'554'432
-#define K_START 1
 #define K_END 10'000
-#define ITERATIONS 1
+#define ITERATIONS 100
 
 using namespace std;
 
@@ -77,21 +75,18 @@ static void buildPRQuadTree(benchmark::State &state) {
     state.SetComplexityN(state.range(0));
 }
 
-static void buildMyKDTree(benchmark::State &state) {
+static void buildSKDTree(benchmark::State &state) {
     vector<Point> points = getRandomPoints(state.range(0));
     double bounds = state.range(0);
     Area area{0, bounds, 0, bounds};
     for ([[maybe_unused]] auto _: state) {
-        auto *myKdTree = new MyKDTree(points, area, 0);
+        auto *myKdTree = new SortKDTree(points, area, 0);
         benchmark::DoNotOptimize(myKdTree);
         myKdTree->buildTree();
-
         delete myKdTree;
     }
     state.SetComplexityN(state.range(0));
 }
-
-// Density
 
 static void buildDenseKDETree(benchmark::State &state) {
     int pointNumber = state.range(0);
@@ -155,7 +150,7 @@ static void buildDenseMyKDTree(benchmark::State &state) {
     vector<Point> points = getDensePoints(state.range(0));
     Area area{0, 1000, 0, 1000};
     for ([[maybe_unused]] auto _: state) {
-        auto *myKdTree = new MyKDTree(points, area, 0);
+        auto *myKdTree = new SortKDTree(points, area, 0);
         benchmark::DoNotOptimize(myKdTree);
         myKdTree->buildTree();
 
@@ -172,7 +167,7 @@ static void buildKDTree_Dynamically(benchmark::State &state) {
     vector<Point> points;
     double bounds = size;
     Area area{0, bounds, 0, bounds};
-    auto *myKdTree = new MyKDTree(points, area, 0);
+    auto *myKdTree = new SortKDTree(points, area, 0);
     vector<Point> randomPoints = getRandomPoints(size);
     for ([[maybe_unused]] auto _: state) {
         benchmark::DoNotOptimize(myKdTree);
@@ -267,7 +262,7 @@ static void queryKDBTree(benchmark::State &state) {
 
 static void queryMYKDTree(benchmark::State &state) {
     int size = state.range(0);
-    MyKDTree *myKdTree = buildMyKD_Random(size);
+    SortKDTree *myKdTree = buildSortKDTreeRandom(size);
     Area bigArea{0.3 * size, 0.5 * size, 0.54 * size, 0.64 * size};
     for ([[maybe_unused]] auto _: state) {
         benchmark::DoNotOptimize(myKdTree);
@@ -363,7 +358,7 @@ static void kDBTreeEfficient_Contains(benchmark::State &state) {
 
 static void myKDTree_Contains(benchmark::State &state) {
     int size = state.range(0);
-    MyKDTree *tree = buildMyKD_Random(size);
+    SortKDTree *tree = buildSortKDTreeRandom(size);
     std::vector<Point> points = getRandomPoints(size);
     std::vector<Point> searchPoints;
     int step = size / 100;
@@ -373,7 +368,7 @@ static void myKDTree_Contains(benchmark::State &state) {
 
     for ([[maybe_unused]] auto _: state) {
         benchmark::DoNotOptimize(tree);
-        myKdContainsPoint(tree, searchPoints);
+        sKDContainsPoint(tree, searchPoints);
     }
     delete tree;
     state.SetComplexityN(state.range(0));
@@ -398,7 +393,7 @@ static void naive_Contains(benchmark::State &state) {
 
 static void myKDTree_NNS(benchmark::State &state) {
     int size = state.range(0);
-    MyKDTree *tree = buildMyKD_Random(size);
+    SortKDTree *tree = buildSortKDTreeRandom(size);
     Point queryPoint{0.35 * size, 0.75 * size};
 
     for ([[maybe_unused]] auto _: state) {
@@ -476,7 +471,7 @@ static void naive_NNS(benchmark::State &state) {
 static void myKDTree_kNNS(benchmark::State &state) {
     int k = state.range(0);
     int n = 10'000'000;
-    MyKDTree *tree = buildMyKD_Random(n);
+    SortKDTree *tree = buildSortKDTreeRandom(n);
     Point queryPoint{0.35 * n, 0.75 * n};
 
     for ([[maybe_unused]] auto _: state) {
@@ -557,108 +552,287 @@ static void naive_kNNS(benchmark::State &state) {
     state.SetComplexityN(state.range(0));
 }
 
-
-#define TEST(func) BENCHMARK(algo1)->Name("func")->DenseRange(START, END, STEPS);
-
 // BUILD
+BENCHMARK(buildQuadTree)
+        ->Name("Build Quadtree")
+        ->RangeMultiplier(2)
+        ->Range(START, END)
+        ->Complexity(benchmark::oNLogN)
+        ->Unit(benchmark::kMillisecond)
+        ->Iterations(ITERATIONS);
 
-BENCHMARK(buildQuadTree)->Name("Build Quadtree")->RangeMultiplier(2)->Range(START, END)
-        ->Complexity(benchmark::oNLogN)->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
-BENCHMARK(buildPRQuadTree)->Name("Build PR-Quadtree")->RangeMultiplier(2)->Range(START, END)
-        ->Complexity(benchmark::oNLogN)->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
-BENCHMARK(buildMyKDTree)->Name("Build MyKDTree")->RangeMultiplier(2)->Range(START, END)
-        ->Complexity(benchmark::oNLogN)->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
-BENCHMARK(buildKDETree)->Name("Build KD-Tree-Efficient")->RangeMultiplier(2)->Range(START, END)
-        ->Complexity(benchmark::oNLogN)->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
-BENCHMARK(buildKDBTree)->Name("Build KDB-Tree-Efficient")->RangeMultiplier(2)->Range(START, END)
-        ->Complexity(benchmark::oNLogN)->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
+BENCHMARK(buildPRQuadTree)
+        ->Name("Build PR-Quadtree")
+        ->RangeMultiplier(2)
+        ->Range(START, END)
+        ->Complexity(benchmark::oNLogN)
+        ->Unit(benchmark::kMillisecond)
+        ->Iterations(ITERATIONS);
 
+BENCHMARK(buildSKDTree)
+        ->Name("Build SortKDTree")
+        ->RangeMultiplier(2)
+        ->Range(START, END)
+        ->Complexity(benchmark::oNLogN)
+        ->Unit(benchmark::kMillisecond)
+        ->Iterations(ITERATIONS);
 
-BENCHMARK(buildDenseQuadTree)->Name("Build Dense Quadtree")->RangeMultiplier(2)->Range(START, END)
-        ->Complexity(benchmark::oNLogN)->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
-BENCHMARK(buildDensePRQuadTree)->Name("Build Dense PR-Quadtree")->RangeMultiplier(2)->Range(START, END)
-        ->Complexity(benchmark::oNLogN)->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
-BENCHMARK(buildDenseMyKDTree)->Name("Build Dense MyKDTree")->RangeMultiplier(2)->Range(START, END)
-        ->Complexity(benchmark::oNLogN)->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
-BENCHMARK(buildDenseKDETree)->Name("Build Dense KD-Tree-Efficient")->RangeMultiplier(2)->Range(START, END)
-        ->Complexity(benchmark::oNLogN)->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
-BENCHMARK(buildDenseKDBTree)->Name("Build Dense KDB-Tree-Efficient")->RangeMultiplier(2)->Range(START, END)
-        ->Complexity(benchmark::oNLogN)->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
+BENCHMARK(buildKDETree)
+        ->Name("Build KD-Tree-Efficient")
+        ->RangeMultiplier(2)
+        ->Range(START, END)
+        ->Complexity(benchmark::oNLogN)
+        ->Unit(benchmark::kMillisecond)
+        ->Iterations(ITERATIONS);
 
+BENCHMARK(buildKDBTree)
+        ->Name("Build KDB-Tree-Efficient")
+        ->RangeMultiplier(2)
+        ->Range(START, END)
+        ->Complexity(benchmark::oNLogN)
+        ->Unit(benchmark::kMillisecond)
+        ->Iterations(ITERATIONS);
+
+BENCHMARK(buildDenseQuadTree)
+        ->Name("Build Dense Quadtree")
+        ->RangeMultiplier(2)
+        ->Range(START, END)
+        ->Complexity(benchmark::oNLogN)
+        ->Unit(benchmark::kMillisecond)
+        ->Iterations(ITERATIONS);
+
+BENCHMARK(buildDensePRQuadTree)
+        ->Name("Build Dense PR-Quadtree")
+        ->RangeMultiplier(2)
+        ->Range(START, END)
+        ->Complexity(benchmark::oNLogN)
+        ->Unit(benchmark::kMillisecond)
+        ->Iterations(ITERATIONS);
+
+BENCHMARK(buildDenseMyKDTree)
+        ->Name("Build Dense SortKDTree")
+        ->RangeMultiplier(2)
+        ->Range(START, END)
+        ->Complexity(benchmark::oNLogN)
+        ->Unit(benchmark::kMillisecond)
+        ->Iterations(ITERATIONS);
+
+BENCHMARK(buildDenseKDETree)
+        ->Name("Build Dense KD-Tree-Efficient")
+        ->RangeMultiplier(2)
+        ->Range(START, END)
+        ->Complexity(benchmark::oNLogN)
+        ->Unit(benchmark::kMillisecond)
+        ->Iterations(ITERATIONS);
+
+BENCHMARK(buildDenseKDBTree)
+        ->Name("Build Dense KDB-Tree-Efficient")
+        ->RangeMultiplier(2)
+        ->Range(START, END)
+        ->Complexity(benchmark::oNLogN)
+        ->Unit(benchmark::kMillisecond)
+        ->Iterations(ITERATIONS);
 
 // Build dynamically
-/*
-BENCHMARK(buildKDTree_Dynamically)->Name("Build MyKDTree-dynamically")->RangeMultiplier(2)->Range(START, END)
-        ->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
-BENCHMARK(buildQuadTree_Dynamically)->Name("Build Quadtree-dynamically")->RangeMultiplier(2)->Range(START, END)
-        ->Unit(benchmark::kMillisecond)->Iterations(ITERATIONS);
-        */
+/*BENCHMARK(buildKDTree_Dynamically)
+        ->Name("Build SortKDTree-dynamically")
+        ->RangeMultiplier(2)->Range(START, END)
+        ->Unit(benchmark::kMillisecond)
+        ->Iterations(ITERATIONS);
 
+BENCHMARK(buildQuadTree_Dynamically)
+        ->Name("Build Quadtree-dynamically")
+        ->RangeMultiplier(2)
+        ->Range(START, END)
+        ->Unit(benchmark::kMillisecond)
+        ->Iterations(ITERATIONS);
+        */
 
 // Query
-/*
-BENCHMARK(queryQuadTree)->Name("Query Quadtree - Variable PointCount")->RangeMultiplier(2)->Range(START, END)
-        ->Unit(benchmark::kMicrosecond)->Complexity(benchmark::oAuto)->Iterations(ITERATIONS);
-BENCHMARK(queryPRQuadTree)->Name("Query PR-Quadtree - Variable PointCount")->RangeMultiplier(2)->Range(START, END)
-        ->Complexity(benchmark::oAuto)->Unit(benchmark::kMicrosecond)->Iterations(ITERATIONS);
-BENCHMARK(queryMYKDTree)->Name("Query MyKDTree - Variable PointCount")->RangeMultiplier(2)->Range(START, END)
-        ->Complexity(benchmark::oAuto)->Unit(benchmark::kMicrosecond)->Iterations(ITERATIONS);
-BENCHMARK(queryKDETree)->Name("Query KD-E - Variable PointCount")->RangeMultiplier(2)->Range(START, END)
-        ->Complexity(benchmark::oAuto)->Unit(benchmark::kMicrosecond)->Iterations(ITERATIONS);
-BENCHMARK(queryKDBTree)->Name("Query KDB-E - Variable PointCount")->RangeMultiplier(2)->Range(START, END)
-        ->Complexity(benchmark::oAuto)->Unit(benchmark::kMicrosecond)->Iterations(ITERATIONS);
-BENCHMARK(queryNaive)->Name("Query Naive - Variable PointCount")->RangeMultiplier(2)->Range(START, END)
-        ->Complexity(benchmark::oAuto)->Unit(benchmark::kMicrosecond)->Iterations(ITERATIONS);
-*/
+BENCHMARK(queryQuadTree)
+        ->Name("Query Quadtree - Variable PointCount")
+        ->RangeMultiplier(2)->Range(START, END)
+        ->Unit(benchmark::kMicrosecond)
+        ->Complexity(benchmark::oAuto)
+        ->Iterations(ITERATIONS);
 
+BENCHMARK(queryPRQuadTree)
+        ->Name("Query PR-Quadtree - Variable PointCount")
+        ->RangeMultiplier(2)->Range(START, END)
+        ->Complexity(benchmark::oAuto)
+        ->Unit(benchmark::kMicrosecond)
+        ->Iterations(ITERATIONS);
+
+BENCHMARK(queryMYKDTree)
+        ->Name("Query SortKDTree - Variable PointCount")
+        ->RangeMultiplier(2)
+        ->Range(START, END)
+        ->Complexity(benchmark::oAuto)
+        ->Unit(benchmark::kMicrosecond)
+        ->Iterations(ITERATIONS);
+
+BENCHMARK(queryKDETree)
+        ->Name("Query KD-E - Variable PointCount")
+        ->RangeMultiplier(2)->Range(START, END)
+        ->Complexity(benchmark::oAuto)
+        ->Unit(benchmark::kMicrosecond)
+        ->Iterations(ITERATIONS);
+
+BENCHMARK(queryKDBTree)
+        ->Name("Query KDB-E - Variable PointCount")
+        ->RangeMultiplier(2)->Range(START, END)
+        ->Complexity(benchmark::oAuto)
+        ->Unit(benchmark::kMicrosecond)
+        ->Iterations(ITERATIONS);
+
+BENCHMARK(queryNaive)->Name("Query Naive - Variable PointCount")
+        ->RangeMultiplier(2)
+        ->Range(START, END)
+        ->Complexity(benchmark::oAuto)
+        ->Unit(benchmark::kMicrosecond)
+        ->Iterations(ITERATIONS);
 
 // CONTAINS
-/*
-BENCHMARK(pr_quadTree_contains)->Name("PR-Quadtree - Contains")->RangeMultiplier(2)->Range(START, END)
-        ->Complexity(benchmark::oLogN)->Unit(benchmark::kMicrosecond)->Iterations(ITERATIONS);
-BENCHMARK(myKDTree_Contains)->Name("MyKDTree - Contains")->RangeMultiplier(2)->Range(START, END)
-        ->Complexity(benchmark::oLogN)->Unit(benchmark::kMicrosecond)->Iterations(ITERATIONS);
-BENCHMARK(kDBTreeEfficient_Contains)->Name("KDB-tree - Contains")->RangeMultiplier(2)->Range(START, END)
-        ->Complexity(benchmark::oLogN)->Unit(benchmark::kMicrosecond)->Iterations(ITERATIONS);
-BENCHMARK(quadTree_contains)->Name("Quadtree - Contains")->RangeMultiplier(2)->Range(START, END)
-        ->Complexity(benchmark::oLogN)->Unit(benchmark::kMicrosecond)->Iterations(ITERATIONS);
-BENCHMARK(kDTreeEfficient_Contains)->Name("KD_Tree_Efficient - Contains")->RangeMultiplier(2)->Range(START, END)
-        ->Complexity(benchmark::oLogN)->Unit(benchmark::kMicrosecond)->Iterations(ITERATIONS);
-        */
+BENCHMARK(pr_quadTree_contains)
+        ->Name("PR-Quadtree - Contains")
+        ->RangeMultiplier(2)
+        ->Range(START, END)
+        ->Complexity(benchmark::oLogN)
+        ->Unit(benchmark::kMicrosecond)
+        ->Iterations(ITERATIONS);
 
-//BENCHMARK(naive_Contains)->Name("Naive - Contains")->RangeMultiplier(2)->Range(START, END)
-//        ->Complexity(benchmark::oN)->Unit(benchmark::kMicrosecond)->Iterations(ITERATIONS);
+BENCHMARK(myKDTree_Contains)
+        ->Name("SortKDTree - Contains")
+        ->RangeMultiplier(2)
+        ->Range(START, END)
+        ->Complexity(benchmark::oLogN)
+        ->Unit(benchmark::kMicrosecond)
+        ->Iterations(ITERATIONS);
 
-/*
+BENCHMARK(kDBTreeEfficient_Contains)
+        ->Name("KDB-tree - Contains")
+        ->RangeMultiplier(2)
+        ->Range(START, END)
+        ->Complexity(benchmark::oLogN)
+        ->Unit(benchmark::kMicrosecond)
+        ->Iterations(ITERATIONS);
+
+BENCHMARK(quadTree_contains)
+        ->Name("Quadtree - Contains")
+        ->RangeMultiplier(2)
+        ->Range(START, END)
+        ->Complexity(benchmark::oLogN)
+        ->Unit(benchmark::kMicrosecond)
+        ->Iterations(ITERATIONS);
+
+BENCHMARK(kDTreeEfficient_Contains)
+        ->Name("KD_Tree_Efficient - Contains")
+        ->RangeMultiplier(2)
+        ->Range(START, END)
+        ->Complexity(benchmark::oLogN)
+        ->Unit(benchmark::kMicrosecond)
+        ->Iterations(ITERATIONS);
+
+BENCHMARK(naive_Contains)->Name("Naive - Contains")
+        ->RangeMultiplier(2)->Range(START, END)
+        ->Complexity(benchmark::oN)
+        ->Unit(benchmark::kMicrosecond)
+        ->Iterations(ITERATIONS);
+
+
 // NNS - variable point count k = 10
-BENCHMARK(quadTree_NNS)->Name("Quadtree - NNS - var n")->RangeMultiplier(2)->Range(START, END)
-        ->Complexity(benchmark::oLogN)->Unit(benchmark::kMicrosecond)->Iterations(ITERATIONS);
-BENCHMARK(pr_quadTree_NNS)->Name("PR-Quadtree - NNS - var n")->RangeMultiplier(2)->Range(START, END)
-        ->Complexity(benchmark::oLogN)->Unit(benchmark::kMicrosecond)->Iterations(ITERATIONS);
-BENCHMARK(myKDTree_NNS)->Name("MyKDTree - NNS - var n")->RangeMultiplier(2)->Range(START, END)
-        ->Complexity(benchmark::oLogN)->Unit(benchmark::kMicrosecond)->Iterations(ITERATIONS);
-BENCHMARK(eKDTree_NNS)->Name("KD_Tree_Efficient -- NNS - var n")->RangeMultiplier(2)->Range(START, END)
-        ->Complexity(benchmark::oLogN)->Unit(benchmark::kMicrosecond)->Iterations(ITERATIONS);
-BENCHMARK(KDBTree_NNS)->Name("KDB_Tree -- NNS - var n")->RangeMultiplier(2)->Range(START, END)
-        ->Complexity(benchmark::oLogN)->Unit(benchmark::kMicrosecond)->Iterations(ITERATIONS);
-BENCHMARK(naive_NNS)->Name("Naive - NNS - var n")->RangeMultiplier(2)->Range(START, END)
-        ->Complexity(benchmark::oN)->Unit(benchmark::kMicrosecond)->Iterations(ITERATIONS);
-        */
+BENCHMARK(quadTree_NNS)
+        ->Name("Quadtree - NNS - var n")
+        ->RangeMultiplier(2)->Range(START, END)
+        ->Complexity(benchmark::oLogN)
+        ->Unit(benchmark::kMicrosecond)
+        ->Iterations(ITERATIONS);
 
-/*
+BENCHMARK(pr_quadTree_NNS)
+        ->Name("PR-Quadtree - NNS - var n")
+        ->RangeMultiplier(2)->Range(START, END)
+        ->Complexity(benchmark::oLogN)
+        ->Unit(benchmark::kMicrosecond)
+        ->Iterations(ITERATIONS);
+
+BENCHMARK(myKDTree_NNS)
+        ->Name("SortKDTree - NNS - var n")
+        ->RangeMultiplier(2)
+        ->Range(START, END)
+        ->Complexity(benchmark::oLogN)
+        ->Unit(benchmark::kMicrosecond)
+        ->Iterations(ITERATIONS);
+
+BENCHMARK(eKDTree_NNS)
+        ->Name("KD_Tree_Efficient -- NNS - var n")
+        ->RangeMultiplier(2)->Range(START, END)
+        ->Complexity(benchmark::oLogN)
+        ->Unit(benchmark::kMicrosecond)
+        ->Iterations(ITERATIONS);
+
+BENCHMARK(KDBTree_NNS)
+        ->Name("KDB_Tree -- NNS - var n")
+        ->RangeMultiplier(2)
+        ->Range(START, END)
+        ->Complexity(benchmark::oLogN)
+        ->Unit(benchmark::kMicrosecond)
+        ->Iterations(ITERATIONS);
+
+BENCHMARK(naive_NNS)
+        ->Name("Naive - NNS - var n")
+        ->RangeMultiplier(2)
+        ->Range(START, END)
+        ->Complexity(benchmark::oN)
+        ->Unit(benchmark::kMicrosecond)
+        ->Iterations(ITERATIONS);
+
 // k-NNS - variable k
-BENCHMARK(quadTree_kNNS)->Name("Quadtree - NNS - var k")->RangeMultiplier(10)->Range(K_START, K_END)
-        ->Complexity(benchmark::oAuto)->Unit(benchmark::kMicrosecond)->Iterations(ITERATIONS);
-BENCHMARK(pr_quadTree_kNNS)->Name("PR-Quadtree - NNS - var k")->RangeMultiplier(10)->Range(K_START, K_END)
-        ->Complexity(benchmark::oAuto)->Unit(benchmark::kMicrosecond)->Iterations(ITERATIONS);
-BENCHMARK(eKDTree_kNNS)->Name("KD_Tree_Efficient -- NNS - var k")->RangeMultiplier(10)->Range(K_START, K_END)
-        ->Complexity(benchmark::oAuto)->Unit(benchmark::kMicrosecond)->Iterations(ITERATIONS);
-BENCHMARK(KDBTree_kNNS)->Name("KDB_Tree -- NNS - var k")->RangeMultiplier(10)->Range(K_START, K_END)
-        ->Complexity(benchmark::oAuto)->Unit(benchmark::kMicrosecond)->Iterations(ITERATIONS);
-BENCHMARK(myKDTree_kNNS)->Name("MyKDTree - NNS - var k")->RangeMultiplier(10)->Range(K_START, K_END)
-        ->Complexity(benchmark::oAuto)->Unit(benchmark::kMicrosecond)->Iterations(ITERATIONS);
-BENCHMARK(naive_kNNS)->Name("Naive - NNS - var k")->RangeMultiplier(10)->Range(K_START, K_END)
-        ->Complexity(benchmark::oNLogN)->Unit(benchmark::kMicrosecond)->Iterations(ITERATIONS);
-        */
+BENCHMARK(quadTree_kNNS)
+        ->Name("Quadtree - NNS - var k")
+        ->RangeMultiplier(10)
+        ->Range(K_START, K_END)
+        ->Complexity(benchmark::oAuto)
+        ->Unit(benchmark::kMicrosecond)
+        ->Iterations(ITERATIONS);
+
+BENCHMARK(pr_quadTree_kNNS)
+        ->Name("PR-Quadtree - NNS - var k")
+        ->RangeMultiplier(10)
+        ->Range(K_START, K_END)
+        ->Complexity(benchmark::oAuto)
+        ->Unit(benchmark::kMicrosecond)
+        ->Iterations(ITERATIONS);
+
+BENCHMARK(eKDTree_kNNS)
+        ->Name("KD_Tree_Efficient -- NNS - var k")
+        ->RangeMultiplier(10)
+        ->Range(K_START, K_END)
+        ->Complexity(benchmark::oAuto)
+        ->Unit(benchmark::kMicrosecond)
+        ->Iterations(ITERATIONS);
+
+BENCHMARK(KDBTree_kNNS)
+        ->Name("KDB_Tree -- NNS - var k")
+        ->RangeMultiplier(10)
+        ->Range(K_START, K_END)
+        ->Complexity(benchmark::oAuto)
+        ->Unit(benchmark::kMicrosecond)
+        ->Iterations(ITERATIONS);
+
+BENCHMARK(myKDTree_kNNS)
+        ->Name("SortKDTree - NNS - var k")
+        ->RangeMultiplier(10)
+        ->Range(K_START, K_END)
+        ->Complexity(benchmark::oAuto)
+        ->Unit(benchmark::kMicrosecond)
+        ->Iterations(ITERATIONS);
+
+BENCHMARK(naive_kNNS)
+        ->Name("Naive - NNS - var k")
+        ->RangeMultiplier(10)
+        ->Range(K_START, K_END)
+        ->Complexity(benchmark::oNLogN)
+        ->Unit(benchmark::kMicrosecond)
+        ->Iterations(ITERATIONS);
 
 BENCHMARK_MAIN();
