@@ -4,6 +4,16 @@
 
 #include "../include/KDTreeEfficient.h"
 
+
+KDTreeEfficient::KDTreeEfficient(Point *points, Area &area, int size) {
+    this->points = points;
+    this->area = area;
+    this->from = 0;
+    this->to = size;
+    this->xMedian = median(points, true, from, to);
+    this->yMedian = 0.0;
+}
+
 KDTreeEfficient::KDTreeEfficient(Point *points, int level, Area &area, int from, int to) {
     this->points = points;
     this->area = area;
@@ -151,6 +161,7 @@ void KDTreeEfficient::kNearestNeighborsHelper(KDTreeEfficient *node, int k,
         }
     }
 }
+
 
 
 

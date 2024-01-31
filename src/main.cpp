@@ -9,13 +9,13 @@ using namespace util;
 
 int main(int argc, char *argv[]) {
     FAST_IO();
-    vector<Point> points = getRandomPoints(10000);
-    double bounds = 10000;
-    Area area{0, bounds, 0, bounds};
-    auto *myKdTree = new SortKDTree(points, area, 0);
-    myKdTree->buildTree();
-    cout << "hier" << endl;
-    delete myKdTree;
+    Point *points = getRandomPointsArray(100000);
+    Area area{0, 100000, 0, 100000};
+    auto *kdTreeEfficient = new KDTreeEfficient(points, area);
+    kdTreeEfficient->buildTree();
+    cout << points[234] << endl;
+    cout << sizeof(points) << endl;
+    delete kdTreeEfficient;
     cout << "hier" << endl;
     return 0;
 }

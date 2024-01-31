@@ -4,6 +4,10 @@
 
 #include "../include/SortKDTree.h"
 
+SortKDTree::SortKDTree(vector<Point> &points, Area &area) : SortKDTree(points, area, 0) {
+
+}
+
 SortKDTree::SortKDTree(vector<Point> &points, Area &area, int level) {
     this->points = points;
     this->area = area;
@@ -184,6 +188,8 @@ vector<Point> SortKDTree::kNearestNeighbors(Point &queryPoint, int k) {
     kNearestNeighborsHelper(this, k, queue, result);
     return result;
 }
+
+
 
 
 

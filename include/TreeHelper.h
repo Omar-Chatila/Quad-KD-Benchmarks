@@ -26,7 +26,6 @@ using namespace std;
  * @return KDTreeEfficient containing random points
  */
 inline KDTreeEfficient *buildEKD_Random(int pointNumber) {
-    int size = pointNumber - 1;
     auto *pointArray = (Point *) malloc(pointNumber * sizeof(Point));
     std::vector<Point> points = getRandomPoints(pointNumber);
     int i = 0;
@@ -35,8 +34,7 @@ inline KDTreeEfficient *buildEKD_Random(int pointNumber) {
     }
     double bounds = pointNumber;
     Area area{0, bounds, 0, bounds};
-    int start = 0;
-    auto *kdTreeEfficient = new KDTreeEfficient(pointArray, 0, area, start, size);
+    auto *kdTreeEfficient = new KDTreeEfficient(pointArray, area, pointNumber);
     kdTreeEfficient->buildTree();
     return kdTreeEfficient;
 }
@@ -101,7 +99,7 @@ inline SortKDTree *buildSortKDTreeRandom(int pointNumber) {
     vector<Point> points = getRandomPoints(pointNumber);
     double bounds = pointNumber;
     Area area{0, bounds, 0, bounds};
-    auto myKdTree = new SortKDTree(points, area, 0);
+    auto myKdTree = new SortKDTree(points, area);
     myKdTree->buildTree();
     return myKdTree;
 }

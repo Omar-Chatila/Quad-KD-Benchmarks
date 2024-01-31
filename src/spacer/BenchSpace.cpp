@@ -273,7 +273,7 @@ static void startBuildBenchmarks() {
         double bounds = i;
         Area area{0, bounds, 0, bounds};
         spacer.reset();
-        auto kdTreeEfficient = new KDTreeEfficient(pointVector, 0, area, 0, i);
+        auto kdTreeEfficient = new KDTreeEfficient(pointVector, area, i);
         kdTreeEfficient->buildTree();
         int64_t space_in_bytes = spacer.space_used();
         int64_t memory = space_in_bytes / 1024;
@@ -290,7 +290,7 @@ static void startBuildBenchmarks() {
         double bounds = i;
         Area area{0, bounds, 0, bounds};
         spacer.reset();
-        auto myKdTree = new SortKDTree(pointVector, area, 0);
+        auto myKdTree = new SortKDTree(pointVector, area);
         myKdTree->buildTree();
         int64_t space_in_bytes = spacer.space_used();
         int64_t memory = space_in_bytes / 1024;

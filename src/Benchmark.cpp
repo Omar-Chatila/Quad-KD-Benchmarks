@@ -9,9 +9,10 @@
 #include "cmath"
 
 #define START 512
-#define END 33'554'432
+#define END 33'554
+#define K_START 1
 #define K_END 10'000
-#define ITERATIONS 100
+#define ITERATIONS 1
 
 using namespace std;
 
@@ -22,7 +23,7 @@ static void buildKDETree(benchmark::State &state) {
     Area area{0, bounds, 0, bounds};
 
     for ([[maybe_unused]] auto _: state) {
-        auto *kdTreeEfficient = new KDTreeEfficient(points, 0, area, 0, pointNumber);
+        auto *kdTreeEfficient = new KDTreeEfficient(points, area, pointNumber);
         benchmark::DoNotOptimize(kdTreeEfficient);
         kdTreeEfficient->buildTree();
         delete kdTreeEfficient;
@@ -80,10 +81,10 @@ static void buildSKDTree(benchmark::State &state) {
     double bounds = state.range(0);
     Area area{0, bounds, 0, bounds};
     for ([[maybe_unused]] auto _: state) {
-        auto *myKdTree = new SortKDTree(points, area, 0);
-        benchmark::DoNotOptimize(myKdTree);
-        myKdTree->buildTree();
-        delete myKdTree;
+        auto *sortKDTree = new SortKDTree(points, area);
+        benchmark::DoNotOptimize(sortKDTree);
+        sortKDTree->buildTree();
+        delete sortKDTree;
     }
     state.SetComplexityN(state.range(0));
 }
@@ -94,7 +95,7 @@ static void buildDenseKDETree(benchmark::State &state) {
     Area area{0, 1000, 0, 1000};
 
     for ([[maybe_unused]] auto _: state) {
-        auto *kdTreeEfficient = new KDTreeEfficient(points, 0, area, 0, pointNumber);
+        auto *kdTreeEfficient = new KDTreeEfficient(points, area, pointNumber);
         benchmark::DoNotOptimize(kdTreeEfficient);
         kdTreeEfficient->buildTree();
         delete kdTreeEfficient;
@@ -119,7 +120,6 @@ static void buildDenseKDBTree(benchmark::State &state) {
 
 static void buildDenseQuadTree(benchmark::State &state) {
     int pointNumber = state.range(0);
-    double bounds = pointNumber;
     vector<Point> points = getDensePoints(pointNumber);
     Area area{0, 1000, 0, 1000};
     for ([[maybe_unused]] auto _: state) {
@@ -134,7 +134,6 @@ static void buildDenseQuadTree(benchmark::State &state) {
 static void buildDensePRQuadTree(benchmark::State &state) {
     int pointNumber = state.range(0);
     int capacity = (int) max(log10(pointNumber), 4.0);
-    double bounds = pointNumber;
     vector<Point> points = getDensePoints(pointNumber);
     Area area{0, 1000, 0, 1000};
     for ([[maybe_unused]] auto _: state) {
@@ -146,15 +145,15 @@ static void buildDensePRQuadTree(benchmark::State &state) {
     state.SetComplexityN(state.range(0));
 }
 
-static void buildDenseMyKDTree(benchmark::State &state) {
+static void buildDensesortKDTree(benchmark::State &state) {
     vector<Point> points = getDensePoints(state.range(0));
     Area area{0, 1000, 0, 1000};
     for ([[maybe_unused]] auto _: state) {
-        auto *myKdTree = new SortKDTree(points, area, 0);
-        benchmark::DoNotOptimize(myKdTree);
-        myKdTree->buildTree();
+        auto *sortKDTree = new SortKDTree(points, area);
+        benchmark::DoNotOptimize(sortKDTree);
+        sortKDTree->buildTree();
 
-        delete myKdTree;
+        delete sortKDTree;
     }
     state.SetComplexityN(state.range(0));
 }
@@ -167,15 +166,15 @@ static void buildKDTree_Dynamically(benchmark::State &state) {
     vector<Point> points;
     double bounds = size;
     Area area{0, bounds, 0, bounds};
-    auto *myKdTree = new SortKDTree(points, area, 0);
+    auto *sortKDTree = new SortKDTree(points, area);
     vector<Point> randomPoints = getRandomPoints(size);
     for ([[maybe_unused]] auto _: state) {
-        benchmark::DoNotOptimize(myKdTree);
+        benchmark::DoNotOptimize(sortKDTree);
         for (int i = 0; i < size; i++) {
-            myKdTree->add(randomPoints[i]);
+            sortKDTree->add(randomPoints[i]);
         }
     }
-    delete myKdTree;
+    delete sortKDTree;
     state.SetComplexityN(state.range(0));
 }
 
@@ -232,7 +231,7 @@ static void queryKDETree(benchmark::State &state) {
     auto *points = getRandomPointsArray(size);
     double bounds = size;
     Area area{0, bounds, 0, bounds};
-    auto *kdTreeEfficient = new KDTreeEfficient(points, 0, area, 0, size);
+    auto *kdTreeEfficient = new KDTreeEfficient(points, area, size);
     kdTreeEfficient->buildTree();
     Area bigArea{0.3 * size, 0.5 * size, 0.54 * size, 0.64 * size};
     for ([[maybe_unused]] auto _: state) {
@@ -260,15 +259,15 @@ static void queryKDBTree(benchmark::State &state) {
     state.SetComplexityN(state.range(0));
 }
 
-static void queryMYKDTree(benchmark::State &state) {
+static void querysortKDTree(benchmark::State &state) {
     int size = state.range(0);
-    SortKDTree *myKdTree = buildSortKDTreeRandom(size);
+    SortKDTree *sortKDTree = buildSortKDTreeRandom(size);
     Area bigArea{0.3 * size, 0.5 * size, 0.54 * size, 0.64 * size};
     for ([[maybe_unused]] auto _: state) {
-        benchmark::DoNotOptimize(myKdTree);
-        myKdTree->query(bigArea);
+        benchmark::DoNotOptimize(sortKDTree);
+        sortKDTree->query(bigArea);
     }
-    delete myKdTree;
+    delete sortKDTree;
     state.SetComplexityN(state.range(0));
 }
 
@@ -356,7 +355,7 @@ static void kDBTreeEfficient_Contains(benchmark::State &state) {
     state.SetComplexityN(state.range(0));
 }
 
-static void myKDTree_Contains(benchmark::State &state) {
+static void sortKDTree_Contains(benchmark::State &state) {
     int size = state.range(0);
     SortKDTree *tree = buildSortKDTreeRandom(size);
     std::vector<Point> points = getRandomPoints(size);
@@ -391,7 +390,7 @@ static void naive_Contains(benchmark::State &state) {
     state.SetComplexityN(state.range(0));
 }
 
-static void myKDTree_NNS(benchmark::State &state) {
+static void sortKDTree_NNS(benchmark::State &state) {
     int size = state.range(0);
     SortKDTree *tree = buildSortKDTreeRandom(size);
     Point queryPoint{0.35 * size, 0.75 * size};
@@ -468,7 +467,7 @@ static void naive_NNS(benchmark::State &state) {
     state.SetComplexityN(state.range(0));
 }
 
-static void myKDTree_kNNS(benchmark::State &state) {
+static void sortKDTree_kNNS(benchmark::State &state) {
     int k = state.range(0);
     int n = 10'000'000;
     SortKDTree *tree = buildSortKDTreeRandom(n);
@@ -609,7 +608,7 @@ BENCHMARK(buildDensePRQuadTree)
         ->Unit(benchmark::kMillisecond)
         ->Iterations(ITERATIONS);
 
-BENCHMARK(buildDenseMyKDTree)
+BENCHMARK(buildDensesortKDTree)
         ->Name("Build Dense SortKDTree")
         ->RangeMultiplier(2)
         ->Range(START, END)
@@ -663,7 +662,7 @@ BENCHMARK(queryPRQuadTree)
         ->Unit(benchmark::kMicrosecond)
         ->Iterations(ITERATIONS);
 
-BENCHMARK(queryMYKDTree)
+BENCHMARK(querysortKDTree)
         ->Name("Query SortKDTree - Variable PointCount")
         ->RangeMultiplier(2)
         ->Range(START, END)
@@ -701,7 +700,7 @@ BENCHMARK(pr_quadTree_contains)
         ->Unit(benchmark::kMicrosecond)
         ->Iterations(ITERATIONS);
 
-BENCHMARK(myKDTree_Contains)
+BENCHMARK(sortKDTree_Contains)
         ->Name("SortKDTree - Contains")
         ->RangeMultiplier(2)
         ->Range(START, END)
@@ -755,7 +754,7 @@ BENCHMARK(pr_quadTree_NNS)
         ->Unit(benchmark::kMicrosecond)
         ->Iterations(ITERATIONS);
 
-BENCHMARK(myKDTree_NNS)
+BENCHMARK(sortKDTree_NNS)
         ->Name("SortKDTree - NNS - var n")
         ->RangeMultiplier(2)
         ->Range(START, END)
@@ -819,7 +818,7 @@ BENCHMARK(KDBTree_kNNS)
         ->Unit(benchmark::kMicrosecond)
         ->Iterations(ITERATIONS);
 
-BENCHMARK(myKDTree_kNNS)
+BENCHMARK(sortKDTree_kNNS)
         ->Name("SortKDTree - NNS - var k")
         ->RangeMultiplier(10)
         ->Range(K_START, K_END)
