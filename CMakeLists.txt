@@ -10,6 +10,13 @@ add_library(malloc_count OBJECT src/spacer/malloc_count.c
         benchmark/include/benchmark/benchmark.h
         benchmark/include/benchmark/export.h
         include/PointRegionQuadTree.h
+        tests/QuadTreeTest.cpp
+        tests/Tests.cpp
+        tests/Tests.h
+        tests/KDTreeTests.cpp
+        tests/KDTreeTests.h
+        tests/UtilTest.cpp
+        tests/UtilTest.h
 )
 target_compile_options(malloc_count PRIVATE -ldl)
 
@@ -25,6 +32,7 @@ add_executable(QuadKDBench src/main.cpp
         $<TARGET_OBJECTS:malloc_count>
         include/PointRegionQuadTree.h
         src/PointRegionQuadTree.cpp
+        tests/QuadTreeTest.cpp
 )
 # Include directories
 target_include_directories(QuadKDBench PRIVATE include)

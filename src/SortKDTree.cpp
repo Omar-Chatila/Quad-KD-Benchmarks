@@ -74,7 +74,7 @@ bool SortKDTree::contains(Point point) {
             current = getMedian(current->points, false) >= point.y ? current->leftChild : current->rightChild;
         }
     }
-    return std::find(current->points.begin(), current->points.end(), point) != current->points.end();
+    return current->points[0] == point;
 }
 
 list<Point> SortKDTree::query(Area &queryRectangle) {

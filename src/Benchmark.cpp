@@ -9,10 +9,10 @@
 #include "cmath"
 
 #define START 512
-#define END 33'554
+#define END 33'554'432
 #define K_START 1
 #define K_END 10'000
-#define ITERATIONS 1
+#define ITERATIONS 100
 
 using namespace std;
 

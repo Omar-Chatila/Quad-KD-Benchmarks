@@ -62,6 +62,19 @@ private:
     double xMedian, yMedian;        /**< Median of x- / y-coordinate */
 
     /**
+     * @Brief Constructs a KD-Tree with the specified area and points
+     *
+     * if the level of a node is even, the list is sorted using the X-Coordinate, otherwise Y-Coordinate is used
+     *
+     * @param points array of points
+     * @param level current level
+     * @param area containing all points
+     * @param from lower bound of point array
+     * @param to upper bound of point array
+     */
+    KDTreeEfficient(Point *points, int level, Area &area, int from, int to);
+
+    /**
      * @brief private helper function to build the KD-Tree
      *
      * Uses level parameter to determine whether to split on X or Y-axis
@@ -96,19 +109,13 @@ private:
                                  std::vector<Point> &result);
 
 public:
-
     /**
-     * @Brief Constructs a KD-Tree with the specified area and points
-     *
-     * if the level of a node is even, the list is sorted using the X-Coordinate, otherwise Y-Coordinate is used
-     *
-     * @param points array of points
-     * @param level current level
-     * @param area containing all points
-     * @param from lower bound of point array
-     * @param to upper bound of point array
+     * @Brief Constructor only for root node. Uses x-coordinate as split coordinate
+     * @param points
+     * @param area
+     * @param size
      */
-    KDTreeEfficient(Point *points, int level, Area &area, int from, int to);
+    KDTreeEfficient(Point *points, Area &area, int size);
 
     /**
      * destroys the KD-Tree and deallocates memory

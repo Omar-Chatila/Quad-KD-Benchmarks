@@ -101,7 +101,6 @@ static int64_t prQuadTree_contains(int pointNumber, spacer &spacer) {
     for (int i = 0; i < pointNumber; i += step) {
         searchPoints.push_back(points.at(i));
     }
-    cout << "size " << searchPoints.size() << endl;
     spacer.reset();
     pr_qtContainsPoint(quadTree, searchPoints);
     int64_t spaceUsed = spacer.space_used();
@@ -229,7 +228,7 @@ static void startBuildBenchmarks() {
 
     cout << "Build results in kBytes" << endl;
 
-    /*for (int i = START; i < END; i *= 2) {
+    for (int i = START; i < END; i *= 2) {
         vector<Point> pointVector = getRandomPoints(i);
         double bounds = i;
         Area area{0, bounds, 0, bounds};
@@ -247,7 +246,7 @@ static void startBuildBenchmarks() {
 
     results.emplace_back("----------------------------------------------------------------");
     spacer.reset();
-    */
+
 
     for (int i = START; i < END; i *= 2) {
         vector<Point> pointVector = getRandomPoints(i);
@@ -306,7 +305,6 @@ static void startBuildBenchmarks() {
 
 static void queryBenchmarks() {
     util::spacer spacer{};
-    vector<string> results;
 
     cout << "Query-Results in Bytes" << endl;
 
@@ -335,9 +333,6 @@ static void queryBenchmarks() {
         cout << ("Naive-Query/" + to_string(i) + ": " + to_string(space)) << endl;
     }
 
-    for (const auto &record: results) {
-        // cout << record << "\n";
-    }
 }
 
 static void containsBenchmarks() {
@@ -365,9 +360,7 @@ static void containsBenchmarks() {
         int64_t space = naive_Contains(i, spacer);
         cout << ("Naive-Contains/" + to_string(i) + ": " + to_string(space)) << endl;
     }
-    for (const auto &record: results) {
-        // cout << record << "\n";
-    }
+
 }
 
 static void kNNSBenchmarks() {
@@ -401,9 +394,9 @@ static void kNNSBenchmarks() {
     }
 }
 
-/*
+
 int main() {
-    /*cout << "++++++++++++++++++START BUILD BENCHMARKS++++++++++++++++++" << "\n";
+    cout << "++++++++++++++++++START BUILD BENCHMARKS++++++++++++++++++" << "\n";
     startBuildBenchmarks();
 
     cout << "++++++++++++++++++START NNS BENCHMARKS++++++++++++++++++" << "\n";
@@ -415,6 +408,6 @@ int main() {
     containsBenchmarks();
     return 0;
 }
-*/
+
 
 

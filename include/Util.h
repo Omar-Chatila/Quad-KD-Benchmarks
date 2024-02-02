@@ -78,6 +78,16 @@ struct Area {
                   << (area.yMin) << ":" << (area.yMax) << ']';
     }
 
+    /**
+     * @brief Overloaded == operator to check if two Areas are equal.
+     * @param other The other Point to compare with.
+     * @return True if areas are equal; false otherwise.
+     */
+    bool operator==(const Area &other) const {
+        return xMin == other.xMin && yMin == other.yMin
+               && xMax == other.xMax && yMax == other.yMax;
+    }
+
     double xMin, xMax, yMin, yMax;
 };
 
@@ -167,7 +177,8 @@ inline vector<vector<Point>> splitVector(vector<Point> &originalVector) {
 }
 
 /**
- * @brief Returns value of Point in the middle of the list
+ * @brief Returns value of Point in the middle of the list.
+ * If size is even, average of both mid values is returned
  * @param list pointlist
  * @param x true if x-coordinate is required, otherwise false
  * @return value of middle point
@@ -234,7 +245,6 @@ inline vector<Point> getDensePoints(int pointNumber) {
             i++;
         }
     }
-    cout << "Size: " << points.size() << endl;
     return points;
 }
 
