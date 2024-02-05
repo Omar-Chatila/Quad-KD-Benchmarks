@@ -1,0 +1,1 @@
+/usr/bin/c++  -O3 CMakeFiles/main.dir/BenchSpace.cpp.o "CMakeFiles/main.dir/home/omar/CLionProjects/Quad-KD-Benchmarks/src/MyKDTree.cpp.o" "CMakeFiles/main.dir/home/omar/CLionProjects/Quad-KD-Benchmarks/src/KDTreeEfficient.cpp.o" "CMakeFiles/main.dir/home/omar/CLionProjects/Quad-KD-Benchmarks/src/QuadTree.cpp.o" CMakeFiles/main.dir/malloc_count.c.o -o main 

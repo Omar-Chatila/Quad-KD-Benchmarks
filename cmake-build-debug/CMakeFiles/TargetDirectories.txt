@@ -1,3 +1,4 @@
-C:/Users/omarc/CLionProjects/QuadKDBench/cmake-build-debug/CMakeFiles/QuadKDBench.dir
-C:/Users/omarc/CLionProjects/QuadKDBench/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/omarc/CLionProjects/QuadKDBench/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/omar/CLionProjects/Quad-KD-Benchmarks/cmake-build-debug/CMakeFiles/malloc_count.dir
+/home/omar/CLionProjects/Quad-KD-Benchmarks/cmake-build-debug/CMakeFiles/QuadKDBench.dir
+/home/omar/CLionProjects/Quad-KD-Benchmarks/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/omar/CLionProjects/Quad-KD-Benchmarks/cmake-build-debug/CMakeFiles/rebuild_cache.dir

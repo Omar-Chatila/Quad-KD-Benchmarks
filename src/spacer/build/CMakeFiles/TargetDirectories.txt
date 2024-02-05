@@ -1,0 +1,3 @@
+/home/omar/CLionProjects/Quad-KD-Benchmarks/src/spacer/build/CMakeFiles/benchspace.dir
+/home/omar/CLionProjects/Quad-KD-Benchmarks/src/spacer/build/CMakeFiles/edit_cache.dir
+/home/omar/CLionProjects/Quad-KD-Benchmarks/src/spacer/build/CMakeFiles/rebuild_cache.dir
